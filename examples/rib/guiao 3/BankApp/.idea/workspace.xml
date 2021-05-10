@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ca1b6a10-41fb-47a0-bc53-864df2ce666c" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../../../.." />
+  </component>
+  <component name="ProjectId" id="1oqQPzu1Cyhmj8aGmxYeq9rSdas" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="preferences.general" />
+  </component>
+  <component name="RunManager" selected="Application.Server 2">
+    <configuration name="Bot 1" type="Application" factoryName="Application" singleton="false">
+      <option name="MAIN_CLASS_NAME" value="client.Bot" />
+      <module name="BankApp" />
+      <option name="PROGRAM_PARAMETERS" value="4803" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Bot 2" type="Application" factoryName="Application" singleton="false">
+      <option name="MAIN_CLASS_NAME" value="client.Bot" />
+      <module name="BankApp" />
+      <option name="PROGRAM_PARAMETERS" value="4804" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Bot 3" type="Application" factoryName="Application" singleton="false">
+      <option name="MAIN_CLASS_NAME" value="client.Bot" />
+      <module name="BankApp" />
+      <option name="PROGRAM_PARAMETERS" value="4805" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Client 1" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="client.Client" />
+      <module name="BankApp" />
+      <option name="PROGRAM_PARAMETERS" value="4803" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Client 2" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="client.Client" />
+      <module name="BankApp" />
+      <option name="PROGRAM_PARAMETERS" value="4804" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Server 1" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="server.Server" />
+      <module name="BankApp" />
+      <option name="PROGRAM_PARAMETERS" value="4803" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Server 2" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="server.Server" />
+      <module name="BankApp" />
+      <option name="PROGRAM_PARAMETERS" value="4804" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Server 3" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="server.Server" />
+      <module name="BankApp" />
+      <option name="PROGRAM_PARAMETERS" value="4805" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Bots" type="CompoundRunConfigurationType">
+      <toRun name="Bot 3" type="Application" />
+      <toRun name="Bot 1" type="Application" />
+      <toRun name="Bot 2" type="Application" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Clients" type="CompoundRunConfigurationType">
+      <toRun name="Client 1" type="Application" />
+      <toRun name="Client 2" type="Application" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Servers" type="CompoundRunConfigurationType">
+      <toRun name="Server 3" type="Application" />
+      <toRun name="Server 1" type="Application" />
+      <toRun name="Server 2" type="Application" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="CompoundRunConfigurationType">
+      <toRun name="Bot 1" type="Application" />
+      <toRun name="Bot 2" type="Application" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Application.Server 2" />
+      <item itemvalue="Application.Server 1" />
+      <item itemvalue="Application.Server 3" />
+      <item itemvalue="Application.Client 2" />
+      <item itemvalue="Application.Bot 1" />
+      <item itemvalue="Application.Bot 2" />
+      <item itemvalue="Application.Bot 3" />
+      <item itemvalue="Application.Client 1" />
+      <item itemvalue="Compound.Bots" />
+      <item itemvalue="Compound.Clients" />
+      <item itemvalue="Compound.Servers" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ca1b6a10-41fb-47a0-bc53-864df2ce666c" name="Default Changelist" comment="" />
+      <created>1614011622542</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1614011622542</updated>
+      <workItem from="1614011624049" duration="3486000" />
+      <workItem from="1614015204435" duration="321000" />
+      <workItem from="1614619914584" duration="15000" />
+      <workItem from="1614619982984" duration="4739000" />
+      <workItem from="1615223914892" duration="3440000" />
+      <workItem from="1615827276015" duration="1383000" />
+      <workItem from="1615829159495" duration="2198000" />
+      <workItem from="1616350441086" duration="691000" />
+      <workItem from="1616351287195" duration="529000" />
+      <workItem from="1616430163779" duration="3311000" />
+      <workItem from="1617296325815" duration="1036000" />
+      <workItem from="1617373955579" duration="329000" />
+      <workItem from="1617885041575" duration="46000" />
+      <workItem from="1618852926529" duration="1031000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
