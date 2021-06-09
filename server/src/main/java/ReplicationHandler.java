@@ -190,9 +190,20 @@ public class ReplicationHandler {
                                     }
                                 } else {
                                     System.out.println(Colors.ANSI_CYAN + "> I AM NOT the LEADER." + Colors.ANSI_RESET);
+                                    // todo: request state to leader
+                                    // enviar o meu id na mensagem para dizer quem está a pedir o estado
                                 }
                             }
                             break;
+                        case STATE_TRANSFER_REQUEST:
+                            // ao receber este pedido, valido se sou o lider e se for então respondo
+                            // com o estado pedido
+                            // ATENÇÃO validar se este state transfer request é incremental ou completo
+                            break;
+                        //case STATE_TRANSFER_REPLY:
+                            // Aqui valido se o server id que vem na resposta corresponde ao meu proprio id, se for
+                        // entao criem uma funcao que aplica o estado recebido
+                          //  break;
                         default:
                             System.err.println("> Unknown operation!");
                             break;

@@ -15,7 +15,8 @@ enum OperationType {
 
   // GROUP COMMUNICATION OPERATIONS
   STATE_TRANSFER = 5;
-  MERGE_PROTOCOL_PROPOSAL = 6;
+  STATE_TRANSFER_REQUEST = 6;
+  MERGE_PROTOCOL_PROPOSAL = 7;
 }
 
 // Message that represents a money transfer, has an account id to withdraw and other to deposit

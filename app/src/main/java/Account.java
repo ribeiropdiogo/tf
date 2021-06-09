@@ -10,6 +10,7 @@ public class Account {
     private final int id;
     private int balance;
     private final AccountStatement statement;
+    private int lastMovementId;
 
     private final Lock accountLock;
 
@@ -18,6 +19,7 @@ public class Account {
         balance = 0;
         this.statement = new AccountStatement();
         this.accountLock = new ReentrantLock();
+        this.lastMovementId = 0;
     }
 
     public int balance(){
@@ -38,6 +40,8 @@ public class Account {
             this.statement.getMovements().remove(0);
         }
 
+        lastMovementId++;
+
         return new ImmutablePair<>(true, movementInfo);
     }
 
@@ -55,6 +59,8 @@ public class Account {
             if (this.statement.getMovements().size() > 10){
                 this.statement.getMovements().remove(0);
             }
+
+            lastMovementId++;
 
             return new ImmutablePair<>(true, movementInfo);
         }else{

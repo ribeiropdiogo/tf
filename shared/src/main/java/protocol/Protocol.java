@@ -52,9 +52,13 @@ public final class Protocol {
      */
     STATE_TRANSFER(5),
     /**
-     * <code>MERGE_PROTOCOL_PROPOSAL = 6;</code>
+     * <code>STATE_TRANSFER_REQUEST = 6;</code>
      */
-    MERGE_PROTOCOL_PROPOSAL(6),
+    STATE_TRANSFER_REQUEST(6),
+    /**
+     * <code>MERGE_PROTOCOL_PROPOSAL = 7;</code>
+     */
+    MERGE_PROTOCOL_PROPOSAL(7),
     UNRECOGNIZED(-1),
     ;
 
@@ -91,9 +95,13 @@ public final class Protocol {
      */
     public static final int STATE_TRANSFER_VALUE = 5;
     /**
-     * <code>MERGE_PROTOCOL_PROPOSAL = 6;</code>
+     * <code>STATE_TRANSFER_REQUEST = 6;</code>
      */
-    public static final int MERGE_PROTOCOL_PROPOSAL_VALUE = 6;
+    public static final int STATE_TRANSFER_REQUEST_VALUE = 6;
+    /**
+     * <code>MERGE_PROTOCOL_PROPOSAL = 7;</code>
+     */
+    public static final int MERGE_PROTOCOL_PROPOSAL_VALUE = 7;
 
 
     public final int getNumber() {
@@ -126,7 +134,8 @@ public final class Protocol {
         case 3: return ACCOUNT_STATEMENT;
         case 4: return INTEREST_CREDIT;
         case 5: return STATE_TRANSFER;
-        case 6: return MERGE_PROTOCOL_PROPOSAL;
+        case 6: return STATE_TRANSFER_REQUEST;
+        case 7: return MERGE_PROTOCOL_PROPOSAL;
         default: return null;
       }
     }
@@ -9752,15 +9761,16 @@ public final class Protocol {
       " \001(\010H\001\210\001\001\022\022\n\005value\030\005 \001(\005H\002\210\001\001\0221\n\021account" +
       "_statement\030\006 \001(\0132\021.AccountStatementH\003\210\001\001" +
       "B\r\n\013_account_idB\t\n\007_resultB\010\n\006_valueB\024\n\022" +
-      "_account_statement*\225\001\n\rOperationType\022\013\n\007" +
+      "_account_statement*\261\001\n\rOperationType\022\013\n\007" +
       "BALANCE\020\000\022\014\n\010MOVEMENT\020\001\022\014\n\010TRANSFER\020\002\022\025\n" +
       "\021ACCOUNT_STATEMENT\020\003\022\023\n\017INTEREST_CREDIT\020" +
-      "\004\022\022\n\016STATE_TRANSFER\020\005\022\033\n\027MERGE_PROTOCOL_" +
-      "PROPOSAL\020\006*b\n\021StateTransferType\022\026\n\022TRANS" +
-      "FER_OPERATION\020\000\022\026\n\022MOVEMENT_OPERATION\020\001\022" +
-      "\035\n\031INTEREST_CREDIT_OPERATION\020\002*A\n\030StateT" +
-      "ransferRequestType\022\016\n\nFULL_STATE\020\000\022\025\n\021IN" +
-      "CREMENTAL_STATE\020\001b\006proto3"
+      "\004\022\022\n\016STATE_TRANSFER\020\005\022\032\n\026STATE_TRANSFER_" +
+      "REQUEST\020\006\022\033\n\027MERGE_PROTOCOL_PROPOSAL\020\007*b" +
+      "\n\021StateTransferType\022\026\n\022TRANSFER_OPERATIO" +
+      "N\020\000\022\026\n\022MOVEMENT_OPERATION\020\001\022\035\n\031INTEREST_" +
+      "CREDIT_OPERATION\020\002*A\n\030StateTransferReque" +
+      "stType\022\016\n\nFULL_STATE\020\000\022\025\n\021INCREMENTAL_ST" +
+      "ATE\020\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
