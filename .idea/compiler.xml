@@ -8,9 +8,18 @@
         <outputRelativeToContentRoot value="true" />
         <module name="app" />
         <module name="client" />
-        <module name="shared" />
         <module name="server" />
+        <module name="shared" />
+        <module name="benchmarks" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="app" target="8" />
+      <module name="benchmarks" target="8" />
+      <module name="client" target="8" />
+      <module name="server" target="8" />
+      <module name="shared" target="8" />
+      <module name="tf-project" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
