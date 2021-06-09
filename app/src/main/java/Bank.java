@@ -169,6 +169,22 @@ public class Bank implements BankInterface{
     }
 
     public Map<Integer, AccountStatement> getBankPartialState(Map<Integer, Integer> lastMovements) {
-       
+        Map <Integer, AccountStatement> reply = new HashMap<>();
+        for(int accountId : lastMovements.keySet()) {
+            if (validateTransferState(accountId,lastMovements.get(accountId)))
+            {
+                Account a = accounts.get(accountId);
+                a.lock();
+                reply.put(accountId,a.getPartialAccountStatement(lastMovements.get(accountId)));
+                a.unlock();
+            }
+            else {
+                Account a = accounts.get(accountId);
+                a.lock();
+                reply.put(accountId,a.getAccountStatement());
+                a.unlock();
+            }
+        }
+        return reply;
     }
 }

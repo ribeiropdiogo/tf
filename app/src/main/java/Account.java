@@ -82,6 +82,20 @@ public class Account {
         return newAccountStatement;
     }
 
+    public AccountStatement getPartialAccountStatement(int movementId){
+        List<MovementInfo> movementInfoList = this.statement.getMovements();
+        AccountStatement newAccountStatement = new AccountStatement();
+        int startIndex = 10 - this.lastMovementId - movementId;
+        for (;startIndex<movementInfoList.size();startIndex++){
+            MovementInfo movementInfo = movementInfoList.get(startIndex);
+            MovementInfo newMovementInfo = new MovementInfo(
+                    movementInfo.getValue(), movementInfo.getDescription(), movementInfo.getTimestamp(), movementInfo.getBalanceAfter()
+            );
+            newAccountStatement.addMovement(newMovementInfo);
+        }
+        return newAccountStatement;
+    }
+
     public void addMovementInfo(MovementInfo movementInfo){
         this.statement.addMovement(movementInfo);
     }
@@ -90,7 +104,7 @@ public class Account {
         return id;
     }
 
-    public int getLastMovementId() {return lastMovementId; }
+    public int getLastMovementId(){return lastMovementId; }
 
     public void setBalance(int balance) {
         this.balance = balance;
