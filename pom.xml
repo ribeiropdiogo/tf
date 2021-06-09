@@ -13,6 +13,7 @@
         <module>server</module>
         <module>shared</module>
         <module>app</module>
+        <module>benchmarks</module>
     </modules>
 
     <properties>

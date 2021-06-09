@@ -10,6 +10,13 @@ public class NTPTime {
     private static final NTPUDPClient ntpUDPClient = new NTPUDPClient();
 
     private static final String[] hosts = new String[]{
+            "pt.pool.ntp.org",
+            "europe.pool.ntp.org",
+            "time.google.com",
+            "time2.google.com",
+            "time.cloudflare.com",
+            "time.windows.com",
+            "time.euro.apple.com",
             "ntp02.oal.ul.pt",
             "ntp04.oal.ul.pt",
     };
@@ -28,7 +35,7 @@ public class NTPTime {
                 return new Date(info.getMessage().getTransmitTimeStamp().getTime()).toInstant();
             }
             catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
         return null;
