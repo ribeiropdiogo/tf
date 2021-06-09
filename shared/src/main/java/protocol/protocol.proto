@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+// ------- OPERATIONS ------- //
+
+enum OperationType {
+
+  // BANK BASIC OPERATIONS
+  BALANCE = 0;
+  MOVEMENT = 1;
+  TRANSFER = 2;
+  ACCOUNT_STATEMENT = 3;
+  INTEREST_CREDIT = 4;
+
+  // GROUP COMMUNICATION OPERATIONS
+  STATE_TRANSFER = 5;
+  MERGE_PROTOCOL_PROPOSAL = 6;
+}
+
+// Message that represents a money transfer, has an account id to withdraw and other to deposit
+message MoneyTransfer {
+  int32 account_withdraw = 1;      // Account id from where the money will be withdraw
+  int32 account_deposit = 2;       // Account id where the money should be deposited
+}
+
+// Message that represents a basic bank operation (movement, transfer)
+message BankOperation {
+  int32 value = 1;
+  string description = 2;
+}
+
+// Message that represents the information about a movement, has the description of the operation,
+// the date and hour of the operation in the server, the movement value and the balance after
+message MovementInfo {
+  string description = 1;
+  google.protobuf.Timestamp date_hour = 2;
+  int32 movement_value = 3;
+  int32 balance_after = 4;
+}
+
+// Message that represents a list of movement information
+message AccountStatement {
+  repeated MovementInfo movements = 1;
+}
+
+enum StateTransferType {
+
+  // STATE TRANSFER POSSIBLE TYPES
+  TRANSFER_OPERATION = 0;
+  MOVEMENT_OPERATION = 1;
+  INTEREST_CREDIT_OPERATION = 2;
+}
+
+// Message that represents a state transfer
+message StateTransfer {
+  string stateTransferId = 1;
+  StateTransferType type = 2;
+  repeated MovementInfo stateInfo = 3;
+
+  // Represents a single account id, useful for movement operation
+  optional int32 account_id = 4;
+
+  // Represents the account id's of the transfer between two accounts
+  optional MoneyTransfer transfer = 5;
+
+  // Map that contains all accounts which the balance changed after interest credit
+  map<int32, MovementInfo> appliedCreditAccounts = 6;
+}
+
+enum StateTransferRequestType {
+  // IN CASE OF TRANSITIONAL VIEW OR POISONED STATE
+  FULL_STATE = 0;         // Poisoned state, requires full transfer
+  INCREMENTAL_STATE = 1;  // Incremental state, only the needed messages
+}
+
+message StateTransferRequest {
+  string stateTransferId = 1;
+  StateTransferRequestType type = 2;
+  // How to request for state? Give a number and server send us last state
+  optional int32 last_observed_state = 3;
+}
+
+// Message that represents a merge protocol proposal
+message MergeProtocolProposal {
+  string serverId = 1;
+  int32 n_applied_messages = 2;
+  int32 n_known_messages = 3;
+}
+
+message Operation {
+  int32 operationId = 1;
+  OperationType type = 2;
+
+  optional int32 account_id = 3;
+
+  optional BankOperation operationInfo = 4; // Information about the operation
+  optional MoneyTransfer moneyTransfer = 5; // Money transfer operation
+
+  // State transfer
+  optional StateTransfer stateTransfer = 6;
+
+  // Merge protocol proposal
+  optional  MergeProtocolProposal mergeProtocolProposal = 7;
+}
+
+// ------- REPLIES ------- //
+
+message OperationReply {
+  int32 operationId = 1;
+  OperationType type = 2;
+
+  optional int32 account_id = 3;
+
+  optional bool result = 4;
+  optional int32 value = 5;
+
+  optional AccountStatement account_statement = 6;
+}

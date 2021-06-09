@@ -1,0 +1,2 @@
+# To compile the protobuf use the command (inside this directory):
+protoc -I . --java_out . protocol.proto
