@@ -138,4 +138,37 @@ public class Bank implements BankInterface{
         account.unlock();
         this.accounts.replace(accountId, account);
     }
+
+    public boolean validateTransferState(int accountId, int lastMovement) {
+        Account account = this.accounts.get(accountId);
+        boolean reply = false;
+        account.lock();
+        reply = (account.getLastMovementId() - lastMovement <= 10);
+        account.unlock();
+        return reply;
+    }
+
+    public Map<Integer, Integer> getAllLastMovements() {
+        Map <Integer, Integer> reply = new HashMap<>();
+        for(Account a : accounts.values()) {
+            a.lock();
+            reply.put(a.getId(), a.getLastMovementId());
+            a.unlock();
+        }
+        return reply;
+    }
+
+    public Map<Integer, AccountStatement> getBankState(){
+        Map <Integer, AccountStatement> reply = new HashMap<>();
+        for(Account a : accounts.values()) {
+            a.lock();
+            reply.put(a.getId(), a.getAccountStatement());
+            a.unlock();
+        }
+        return reply;
+    }
+
+    public Map<Integer, AccountStatement> getBankPartialState(Map<Integer, Integer> lastMovements) {
+       
+    }
 }

@@ -16,7 +16,8 @@ enum OperationType {
   // GROUP COMMUNICATION OPERATIONS
   STATE_TRANSFER = 5;
   STATE_TRANSFER_REQUEST = 6;
-  MERGE_PROTOCOL_PROPOSAL = 7;
+  STATE_TRANSFER_REPLY = 7;
+  MERGE_PROTOCOL_PROPOSAL = 8;
 }
 
 // Message that represents a money transfer, has an account id to withdraw and other to deposit
@@ -76,10 +77,10 @@ enum StateTransferRequestType {
 }
 
 message StateTransferRequest {
-  string stateTransferId = 1;
+  string serverId = 1;
   StateTransferRequestType type = 2;
   // How to request for state? Give a number and server send us last state
-  optional int32 last_observed_state = 3;
+  map<int32,int32> last_observed_states = 3;
 }
 
 // Message that represents a merge protocol proposal
@@ -101,8 +102,11 @@ message Operation {
   // State transfer
   optional StateTransfer stateTransfer = 6;
 
+  optional StateTransferRequest stateTransferRequest = 7;
+
+
   // Merge protocol proposal
-  optional  MergeProtocolProposal mergeProtocolProposal = 7;
+  optional  MergeProtocolProposal mergeProtocolProposal = 8;
 }
 
 // ------- REPLIES ------- //
@@ -117,4 +121,10 @@ message OperationReply {
   optional int32 value = 5;
 
   optional AccountStatement account_statement = 6;
+  optional StateTransferReply  state_transfer_reply = 7;
+}
+
+message StateTransferReply {
+  string serverId = 1;
+  map<int32, AccountStatement> accounts_states = 2;
 }

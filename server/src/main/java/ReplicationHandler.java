@@ -190,12 +190,59 @@ public class ReplicationHandler {
                                     }
                                 } else {
                                     System.out.println(Colors.ANSI_CYAN + "> I AM NOT the LEADER." + Colors.ANSI_RESET);
-                                    // todo: request state to leader
-                                    // enviar o meu id na mensagem para dizer quem está a pedir o estado
+
+                                    Protocol.Operation stateTransferOperation;
+
+                                    if(IS_STATE_POISONED) {
+                                        // request state to leader
+                                        stateTransferOperation = Protocol.Operation.newBuilder()
+                                                .setType(Protocol.OperationType.STATE_TRANSFER_REQUEST)
+                                                .setStateTransferRequest(Protocol.StateTransferRequest.newBuilder()
+                                                        .setServerId(serverId)
+                                                        .setType(Protocol.StateTransferRequestType.FULL_STATE)
+                                                        .build())
+                                                .build();
+                                    }
+                                    else {
+                                        //get All last Movements from all accounts
+                                        Map<Integer, Integer> lastMovements = bank.getAllLastMovements();
+
+                                        // request state to leader
+                                        stateTransferOperation = Protocol.Operation.newBuilder()
+                                                .setType(Protocol.OperationType.STATE_TRANSFER_REQUEST)
+                                                .setStateTransferRequest(Protocol.StateTransferRequest.newBuilder()
+                                                                .setServerId(serverId).putAllLastObservedStates(lastMovements)
+                                                                .setType(Protocol.StateTransferRequestType.INCREMENTAL_STATE)
+                                                        .build())
+                                                .build();
+                                    }
+
+                                    try {
+                                        networkGroup.sendSafe("server-group", stateTransferOperation);
+
+                                        System.out.println(Colors.ANSI_GREEN + "> STATE TRANSFER Incremental or full State." + Colors.ANSI_RESET);
+
+                                    } catch (SpreadException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                             break;
                         case STATE_TRANSFER_REQUEST:
+                            if(IS_LEADER) {
+                                Protocol.StateTransferRequest stateRequest = operation.getStateTransferRequest();
+                                if(stateRequest.getType() == Protocol.StateTransferRequestType.FULL_STATE) {
+
+
+                                    Protocol.OperationReply stateOperationReply = Protocol.OperationReply.newBuilder()
+                                            .setType(Protocol.OperationType.STATE_TRANSFER_REPLY)
+                                            .setStateTransferReply(
+                                                    Protocol.StateTransferReply.newBuilder()
+                                                            .setServerId(stateRequest.getServerId())
+                                                            .putAllAccountsStates().build())
+                                            .build();
+                                }
+                            }
                             // ao receber este pedido, valido se sou o lider e se for então respondo
                             // com o estado pedido
                             // ATENÇÃO validar se este state transfer request é incremental ou completo

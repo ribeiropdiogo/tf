@@ -90,6 +90,8 @@ public class Account {
         return id;
     }
 
+    public int getLastMovementId() {return lastMovementId; }
+
     public void setBalance(int balance) {
         this.balance = balance;
     }
