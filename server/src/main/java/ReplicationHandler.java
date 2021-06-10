@@ -217,7 +217,7 @@ public class ReplicationHandler {
                                     try {
                                         networkGroup.sendSafe("server-group", stateTransferOperation);
 
-                                        System.out.println(Colors.ANSI_GREEN + "> STATE TRANSFER Incremental or full State." + Colors.ANSI_RESET);
+                                        System.out.println(Colors.ANSI_GREEN + "> STATE TRANSFER from merge protocol." + Colors.ANSI_RESET);
 
                                     } catch (SpreadException e) {
                                         e.printStackTrace();
@@ -277,7 +277,7 @@ public class ReplicationHandler {
                                 try {
                                     networkGroup.sendSafe("server-group", stateOperationReply);
 
-                                    System.out.println(Colors.ANSI_GREEN + "> STATE TRANSFER Incremental or full State." + Colors.ANSI_RESET);
+                                    System.out.println(Colors.ANSI_GREEN + "> Sent state transfer reply to requester." + Colors.ANSI_RESET);
 
                                 } catch (SpreadException e) {
                                     e.printStackTrace();
@@ -296,7 +296,9 @@ public class ReplicationHandler {
                                         bank.updateAccountState(e.getKey(), ProtocolUtil.convertProtocolMovementInfoToMovementInfo(mov));
                                     }
                                 }
+                                System.out.println(Colors.ANSI_GREEN + "> Received state transfer and already applied" + Colors.ANSI_RESET);
                             }
+
 
                           break;
                         default:
