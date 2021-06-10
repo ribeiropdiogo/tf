@@ -7169,11 +7169,26 @@ public final class Protocol {
     Protocol.StateTransferRequestOrBuilder getStateTransferRequestOrBuilder();
 
     /**
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     * @return Whether the stateTransferReply field is set.
+     */
+    boolean hasStateTransferReply();
+    /**
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     * @return The stateTransferReply.
+     */
+    Protocol.StateTransferReply getStateTransferReply();
+    /**
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     */
+    Protocol.StateTransferReplyOrBuilder getStateTransferReplyOrBuilder();
+
+    /**
      * <pre>
      * Merge protocol proposal
      * </pre>
      *
-     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      * @return Whether the mergeProtocolProposal field is set.
      */
     boolean hasMergeProtocolProposal();
@@ -7182,7 +7197,7 @@ public final class Protocol {
      * Merge protocol proposal
      * </pre>
      *
-     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      * @return The mergeProtocolProposal.
      */
     Protocol.MergeProtocolProposal getMergeProtocolProposal();
@@ -7191,7 +7206,7 @@ public final class Protocol {
      * Merge protocol proposal
      * </pre>
      *
-     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      */
     Protocol.MergeProtocolProposalOrBuilder getMergeProtocolProposalOrBuilder();
   }
@@ -7311,8 +7326,21 @@ public final class Protocol {
               break;
             }
             case 66: {
-              Protocol.MergeProtocolProposal.Builder subBuilder = null;
+              Protocol.StateTransferReply.Builder subBuilder = null;
               if (((bitField0_ & 0x00000020) != 0)) {
+                subBuilder = stateTransferReply_.toBuilder();
+              }
+              stateTransferReply_ = input.readMessage(Protocol.StateTransferReply.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(stateTransferReply_);
+                stateTransferReply_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000020;
+              break;
+            }
+            case 74: {
+              Protocol.MergeProtocolProposal.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000040) != 0)) {
                 subBuilder = mergeProtocolProposal_.toBuilder();
               }
               mergeProtocolProposal_ = input.readMessage(Protocol.MergeProtocolProposal.parser(), extensionRegistry);
@@ -7320,7 +7348,7 @@ public final class Protocol {
                 subBuilder.mergeFrom(mergeProtocolProposal_);
                 mergeProtocolProposal_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000020;
+              bitField0_ |= 0x00000040;
               break;
             }
             default: {
@@ -7545,26 +7573,52 @@ public final class Protocol {
       return stateTransferRequest_ == null ? Protocol.StateTransferRequest.getDefaultInstance() : stateTransferRequest_;
     }
 
-    public static final int MERGEPROTOCOLPROPOSAL_FIELD_NUMBER = 8;
+    public static final int STATE_TRANSFER_REPLY_FIELD_NUMBER = 8;
+    private Protocol.StateTransferReply stateTransferReply_;
+    /**
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     * @return Whether the stateTransferReply field is set.
+     */
+    @java.lang.Override
+    public boolean hasStateTransferReply() {
+      return ((bitField0_ & 0x00000020) != 0);
+    }
+    /**
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     * @return The stateTransferReply.
+     */
+    @java.lang.Override
+    public Protocol.StateTransferReply getStateTransferReply() {
+      return stateTransferReply_ == null ? Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
+    }
+    /**
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     */
+    @java.lang.Override
+    public Protocol.StateTransferReplyOrBuilder getStateTransferReplyOrBuilder() {
+      return stateTransferReply_ == null ? Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
+    }
+
+    public static final int MERGEPROTOCOLPROPOSAL_FIELD_NUMBER = 9;
     private Protocol.MergeProtocolProposal mergeProtocolProposal_;
     /**
      * <pre>
      * Merge protocol proposal
      * </pre>
      *
-     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      * @return Whether the mergeProtocolProposal field is set.
      */
     @java.lang.Override
     public boolean hasMergeProtocolProposal() {
-      return ((bitField0_ & 0x00000020) != 0);
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      * <pre>
      * Merge protocol proposal
      * </pre>
      *
-     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      * @return The mergeProtocolProposal.
      */
     @java.lang.Override
@@ -7576,7 +7630,7 @@ public final class Protocol {
      * Merge protocol proposal
      * </pre>
      *
-     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      */
     @java.lang.Override
     public Protocol.MergeProtocolProposalOrBuilder getMergeProtocolProposalOrBuilder() {
@@ -7619,7 +7673,10 @@ public final class Protocol {
         output.writeMessage(7, getStateTransferRequest());
       }
       if (((bitField0_ & 0x00000020) != 0)) {
-        output.writeMessage(8, getMergeProtocolProposal());
+        output.writeMessage(8, getStateTransferReply());
+      }
+      if (((bitField0_ & 0x00000040) != 0)) {
+        output.writeMessage(9, getMergeProtocolProposal());
       }
       unknownFields.writeTo(output);
     }
@@ -7660,7 +7717,11 @@ public final class Protocol {
       }
       if (((bitField0_ & 0x00000020) != 0)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, getMergeProtocolProposal());
+          .computeMessageSize(8, getStateTransferReply());
+      }
+      if (((bitField0_ & 0x00000040) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(9, getMergeProtocolProposal());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -7705,6 +7766,11 @@ public final class Protocol {
         if (!getStateTransferRequest()
             .equals(other.getStateTransferRequest())) return false;
       }
+      if (hasStateTransferReply() != other.hasStateTransferReply()) return false;
+      if (hasStateTransferReply()) {
+        if (!getStateTransferReply()
+            .equals(other.getStateTransferReply())) return false;
+      }
       if (hasMergeProtocolProposal() != other.hasMergeProtocolProposal()) return false;
       if (hasMergeProtocolProposal()) {
         if (!getMergeProtocolProposal()
@@ -7744,6 +7810,10 @@ public final class Protocol {
       if (hasStateTransferRequest()) {
         hash = (37 * hash) + STATETRANSFERREQUEST_FIELD_NUMBER;
         hash = (53 * hash) + getStateTransferRequest().hashCode();
+      }
+      if (hasStateTransferReply()) {
+        hash = (37 * hash) + STATE_TRANSFER_REPLY_FIELD_NUMBER;
+        hash = (53 * hash) + getStateTransferReply().hashCode();
       }
       if (hasMergeProtocolProposal()) {
         hash = (37 * hash) + MERGEPROTOCOLPROPOSAL_FIELD_NUMBER;
@@ -7881,6 +7951,7 @@ public final class Protocol {
           getMoneyTransferFieldBuilder();
           getStateTransferFieldBuilder();
           getStateTransferRequestFieldBuilder();
+          getStateTransferReplyFieldBuilder();
           getMergeProtocolProposalFieldBuilder();
         }
       }
@@ -7917,12 +7988,18 @@ public final class Protocol {
           stateTransferRequestBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000010);
+        if (stateTransferReplyBuilder_ == null) {
+          stateTransferReply_ = null;
+        } else {
+          stateTransferReplyBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000020);
         if (mergeProtocolProposalBuilder_ == null) {
           mergeProtocolProposal_ = null;
         } else {
           mergeProtocolProposalBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
 
@@ -7990,12 +8067,20 @@ public final class Protocol {
           to_bitField0_ |= 0x00000010;
         }
         if (((from_bitField0_ & 0x00000020) != 0)) {
+          if (stateTransferReplyBuilder_ == null) {
+            result.stateTransferReply_ = stateTransferReply_;
+          } else {
+            result.stateTransferReply_ = stateTransferReplyBuilder_.build();
+          }
+          to_bitField0_ |= 0x00000020;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
           if (mergeProtocolProposalBuilder_ == null) {
             result.mergeProtocolProposal_ = mergeProtocolProposal_;
           } else {
             result.mergeProtocolProposal_ = mergeProtocolProposalBuilder_.build();
           }
-          to_bitField0_ |= 0x00000020;
+          to_bitField0_ |= 0x00000040;
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -8066,6 +8151,9 @@ public final class Protocol {
         }
         if (other.hasStateTransferRequest()) {
           mergeStateTransferRequest(other.getStateTransferRequest());
+        }
+        if (other.hasStateTransferReply()) {
+          mergeStateTransferReply(other.getStateTransferReply());
         }
         if (other.hasMergeProtocolProposal()) {
           mergeMergeProtocolProposal(other.getMergeProtocolProposal());
@@ -8812,6 +8900,126 @@ public final class Protocol {
         return stateTransferRequestBuilder_;
       }
 
+      private Protocol.StateTransferReply stateTransferReply_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          Protocol.StateTransferReply, Protocol.StateTransferReply.Builder, Protocol.StateTransferReplyOrBuilder> stateTransferReplyBuilder_;
+      /**
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       * @return Whether the stateTransferReply field is set.
+       */
+      public boolean hasStateTransferReply() {
+        return ((bitField0_ & 0x00000020) != 0);
+      }
+      /**
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       * @return The stateTransferReply.
+       */
+      public Protocol.StateTransferReply getStateTransferReply() {
+        if (stateTransferReplyBuilder_ == null) {
+          return stateTransferReply_ == null ? Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
+        } else {
+          return stateTransferReplyBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Builder setStateTransferReply(Protocol.StateTransferReply value) {
+        if (stateTransferReplyBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          stateTransferReply_ = value;
+          onChanged();
+        } else {
+          stateTransferReplyBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Builder setStateTransferReply(
+          Protocol.StateTransferReply.Builder builderForValue) {
+        if (stateTransferReplyBuilder_ == null) {
+          stateTransferReply_ = builderForValue.build();
+          onChanged();
+        } else {
+          stateTransferReplyBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Builder mergeStateTransferReply(Protocol.StateTransferReply value) {
+        if (stateTransferReplyBuilder_ == null) {
+          if (((bitField0_ & 0x00000020) != 0) &&
+              stateTransferReply_ != null &&
+              stateTransferReply_ != Protocol.StateTransferReply.getDefaultInstance()) {
+            stateTransferReply_ =
+              Protocol.StateTransferReply.newBuilder(stateTransferReply_).mergeFrom(value).buildPartial();
+          } else {
+            stateTransferReply_ = value;
+          }
+          onChanged();
+        } else {
+          stateTransferReplyBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Builder clearStateTransferReply() {
+        if (stateTransferReplyBuilder_ == null) {
+          stateTransferReply_ = null;
+          onChanged();
+        } else {
+          stateTransferReplyBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000020);
+        return this;
+      }
+      /**
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Protocol.StateTransferReply.Builder getStateTransferReplyBuilder() {
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return getStateTransferReplyFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Protocol.StateTransferReplyOrBuilder getStateTransferReplyOrBuilder() {
+        if (stateTransferReplyBuilder_ != null) {
+          return stateTransferReplyBuilder_.getMessageOrBuilder();
+        } else {
+          return stateTransferReply_ == null ?
+              Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
+        }
+      }
+      /**
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          Protocol.StateTransferReply, Protocol.StateTransferReply.Builder, Protocol.StateTransferReplyOrBuilder> 
+          getStateTransferReplyFieldBuilder() {
+        if (stateTransferReplyBuilder_ == null) {
+          stateTransferReplyBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              Protocol.StateTransferReply, Protocol.StateTransferReply.Builder, Protocol.StateTransferReplyOrBuilder>(
+                  getStateTransferReply(),
+                  getParentForChildren(),
+                  isClean());
+          stateTransferReply_ = null;
+        }
+        return stateTransferReplyBuilder_;
+      }
+
       private Protocol.MergeProtocolProposal mergeProtocolProposal_;
       private com.google.protobuf.SingleFieldBuilderV3<
           Protocol.MergeProtocolProposal, Protocol.MergeProtocolProposal.Builder, Protocol.MergeProtocolProposalOrBuilder> mergeProtocolProposalBuilder_;
@@ -8820,18 +9028,18 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        * @return Whether the mergeProtocolProposal field is set.
        */
       public boolean hasMergeProtocolProposal() {
-        return ((bitField0_ & 0x00000020) != 0);
+        return ((bitField0_ & 0x00000040) != 0);
       }
       /**
        * <pre>
        * Merge protocol proposal
        * </pre>
        *
-       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        * @return The mergeProtocolProposal.
        */
       public Protocol.MergeProtocolProposal getMergeProtocolProposal() {
@@ -8846,7 +9054,7 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Builder setMergeProtocolProposal(Protocol.MergeProtocolProposal value) {
         if (mergeProtocolProposalBuilder_ == null) {
@@ -8858,7 +9066,7 @@ public final class Protocol {
         } else {
           mergeProtocolProposalBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000040;
         return this;
       }
       /**
@@ -8866,7 +9074,7 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Builder setMergeProtocolProposal(
           Protocol.MergeProtocolProposal.Builder builderForValue) {
@@ -8876,7 +9084,7 @@ public final class Protocol {
         } else {
           mergeProtocolProposalBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000040;
         return this;
       }
       /**
@@ -8884,11 +9092,11 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Builder mergeMergeProtocolProposal(Protocol.MergeProtocolProposal value) {
         if (mergeProtocolProposalBuilder_ == null) {
-          if (((bitField0_ & 0x00000020) != 0) &&
+          if (((bitField0_ & 0x00000040) != 0) &&
               mergeProtocolProposal_ != null &&
               mergeProtocolProposal_ != Protocol.MergeProtocolProposal.getDefaultInstance()) {
             mergeProtocolProposal_ =
@@ -8900,7 +9108,7 @@ public final class Protocol {
         } else {
           mergeProtocolProposalBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000040;
         return this;
       }
       /**
@@ -8908,7 +9116,7 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Builder clearMergeProtocolProposal() {
         if (mergeProtocolProposalBuilder_ == null) {
@@ -8917,7 +9125,7 @@ public final class Protocol {
         } else {
           mergeProtocolProposalBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
       /**
@@ -8925,10 +9133,10 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Protocol.MergeProtocolProposal.Builder getMergeProtocolProposalBuilder() {
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000040;
         onChanged();
         return getMergeProtocolProposalFieldBuilder().getBuilder();
       }
@@ -8937,7 +9145,7 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Protocol.MergeProtocolProposalOrBuilder getMergeProtocolProposalOrBuilder() {
         if (mergeProtocolProposalBuilder_ != null) {
@@ -8952,7 +9160,7 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 8;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           Protocol.MergeProtocolProposal, Protocol.MergeProtocolProposal.Builder, Protocol.MergeProtocolProposalOrBuilder> 
@@ -9088,21 +9296,6 @@ public final class Protocol {
      * <code>optional .AccountStatement account_statement = 6;</code>
      */
     Protocol.AccountStatementOrBuilder getAccountStatementOrBuilder();
-
-    /**
-     * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-     * @return Whether the stateTransferReply field is set.
-     */
-    boolean hasStateTransferReply();
-    /**
-     * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-     * @return The stateTransferReply.
-     */
-    Protocol.StateTransferReply getStateTransferReply();
-    /**
-     * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-     */
-    Protocol.StateTransferReplyOrBuilder getStateTransferReplyOrBuilder();
   }
   /**
    * Protobuf type {@code OperationReply}
@@ -9188,19 +9381,6 @@ public final class Protocol {
                 accountStatement_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000008;
-              break;
-            }
-            case 58: {
-              Protocol.StateTransferReply.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000010) != 0)) {
-                subBuilder = stateTransferReply_.toBuilder();
-              }
-              stateTransferReply_ = input.readMessage(Protocol.StateTransferReply.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(stateTransferReply_);
-                stateTransferReply_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000010;
               break;
             }
             default: {
@@ -9349,32 +9529,6 @@ public final class Protocol {
       return accountStatement_ == null ? Protocol.AccountStatement.getDefaultInstance() : accountStatement_;
     }
 
-    public static final int STATE_TRANSFER_REPLY_FIELD_NUMBER = 7;
-    private Protocol.StateTransferReply stateTransferReply_;
-    /**
-     * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-     * @return Whether the stateTransferReply field is set.
-     */
-    @java.lang.Override
-    public boolean hasStateTransferReply() {
-      return ((bitField0_ & 0x00000010) != 0);
-    }
-    /**
-     * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-     * @return The stateTransferReply.
-     */
-    @java.lang.Override
-    public Protocol.StateTransferReply getStateTransferReply() {
-      return stateTransferReply_ == null ? Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
-    }
-    /**
-     * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-     */
-    @java.lang.Override
-    public Protocol.StateTransferReplyOrBuilder getStateTransferReplyOrBuilder() {
-      return stateTransferReply_ == null ? Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -9406,9 +9560,6 @@ public final class Protocol {
       }
       if (((bitField0_ & 0x00000008) != 0)) {
         output.writeMessage(6, getAccountStatement());
-      }
-      if (((bitField0_ & 0x00000010) != 0)) {
-        output.writeMessage(7, getStateTransferReply());
       }
       unknownFields.writeTo(output);
     }
@@ -9442,10 +9593,6 @@ public final class Protocol {
       if (((bitField0_ & 0x00000008) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(6, getAccountStatement());
-      }
-      if (((bitField0_ & 0x00000010) != 0)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, getStateTransferReply());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -9485,11 +9632,6 @@ public final class Protocol {
         if (!getAccountStatement()
             .equals(other.getAccountStatement())) return false;
       }
-      if (hasStateTransferReply() != other.hasStateTransferReply()) return false;
-      if (hasStateTransferReply()) {
-        if (!getStateTransferReply()
-            .equals(other.getStateTransferReply())) return false;
-      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -9521,10 +9663,6 @@ public final class Protocol {
       if (hasAccountStatement()) {
         hash = (37 * hash) + ACCOUNT_STATEMENT_FIELD_NUMBER;
         hash = (53 * hash) + getAccountStatement().hashCode();
-      }
-      if (hasStateTransferReply()) {
-        hash = (37 * hash) + STATE_TRANSFER_REPLY_FIELD_NUMBER;
-        hash = (53 * hash) + getStateTransferReply().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -9655,7 +9793,6 @@ public final class Protocol {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
           getAccountStatementFieldBuilder();
-          getStateTransferReplyFieldBuilder();
         }
       }
       @java.lang.Override
@@ -9677,12 +9814,6 @@ public final class Protocol {
           accountStatementBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000008);
-        if (stateTransferReplyBuilder_ == null) {
-          stateTransferReply_ = null;
-        } else {
-          stateTransferReplyBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -9732,14 +9863,6 @@ public final class Protocol {
             result.accountStatement_ = accountStatementBuilder_.build();
           }
           to_bitField0_ |= 0x00000008;
-        }
-        if (((from_bitField0_ & 0x00000010) != 0)) {
-          if (stateTransferReplyBuilder_ == null) {
-            result.stateTransferReply_ = stateTransferReply_;
-          } else {
-            result.stateTransferReply_ = stateTransferReplyBuilder_.build();
-          }
-          to_bitField0_ |= 0x00000010;
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -9807,9 +9930,6 @@ public final class Protocol {
         }
         if (other.hasAccountStatement()) {
           mergeAccountStatement(other.getAccountStatement());
-        }
-        if (other.hasStateTransferReply()) {
-          mergeStateTransferReply(other.getStateTransferReply());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -10161,126 +10281,6 @@ public final class Protocol {
           accountStatement_ = null;
         }
         return accountStatementBuilder_;
-      }
-
-      private Protocol.StateTransferReply stateTransferReply_;
-      private com.google.protobuf.SingleFieldBuilderV3<
-          Protocol.StateTransferReply, Protocol.StateTransferReply.Builder, Protocol.StateTransferReplyOrBuilder> stateTransferReplyBuilder_;
-      /**
-       * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-       * @return Whether the stateTransferReply field is set.
-       */
-      public boolean hasStateTransferReply() {
-        return ((bitField0_ & 0x00000010) != 0);
-      }
-      /**
-       * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-       * @return The stateTransferReply.
-       */
-      public Protocol.StateTransferReply getStateTransferReply() {
-        if (stateTransferReplyBuilder_ == null) {
-          return stateTransferReply_ == null ? Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
-        } else {
-          return stateTransferReplyBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-       */
-      public Builder setStateTransferReply(Protocol.StateTransferReply value) {
-        if (stateTransferReplyBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          stateTransferReply_ = value;
-          onChanged();
-        } else {
-          stateTransferReplyBuilder_.setMessage(value);
-        }
-        bitField0_ |= 0x00000010;
-        return this;
-      }
-      /**
-       * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-       */
-      public Builder setStateTransferReply(
-          Protocol.StateTransferReply.Builder builderForValue) {
-        if (stateTransferReplyBuilder_ == null) {
-          stateTransferReply_ = builderForValue.build();
-          onChanged();
-        } else {
-          stateTransferReplyBuilder_.setMessage(builderForValue.build());
-        }
-        bitField0_ |= 0x00000010;
-        return this;
-      }
-      /**
-       * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-       */
-      public Builder mergeStateTransferReply(Protocol.StateTransferReply value) {
-        if (stateTransferReplyBuilder_ == null) {
-          if (((bitField0_ & 0x00000010) != 0) &&
-              stateTransferReply_ != null &&
-              stateTransferReply_ != Protocol.StateTransferReply.getDefaultInstance()) {
-            stateTransferReply_ =
-              Protocol.StateTransferReply.newBuilder(stateTransferReply_).mergeFrom(value).buildPartial();
-          } else {
-            stateTransferReply_ = value;
-          }
-          onChanged();
-        } else {
-          stateTransferReplyBuilder_.mergeFrom(value);
-        }
-        bitField0_ |= 0x00000010;
-        return this;
-      }
-      /**
-       * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-       */
-      public Builder clearStateTransferReply() {
-        if (stateTransferReplyBuilder_ == null) {
-          stateTransferReply_ = null;
-          onChanged();
-        } else {
-          stateTransferReplyBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000010);
-        return this;
-      }
-      /**
-       * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-       */
-      public Protocol.StateTransferReply.Builder getStateTransferReplyBuilder() {
-        bitField0_ |= 0x00000010;
-        onChanged();
-        return getStateTransferReplyFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-       */
-      public Protocol.StateTransferReplyOrBuilder getStateTransferReplyOrBuilder() {
-        if (stateTransferReplyBuilder_ != null) {
-          return stateTransferReplyBuilder_.getMessageOrBuilder();
-        } else {
-          return stateTransferReply_ == null ?
-              Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
-        }
-      }
-      /**
-       * <code>optional .StateTransferReply state_transfer_reply = 7;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilderV3<
-          Protocol.StateTransferReply, Protocol.StateTransferReply.Builder, Protocol.StateTransferReplyOrBuilder> 
-          getStateTransferReplyFieldBuilder() {
-        if (stateTransferReplyBuilder_ == null) {
-          stateTransferReplyBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              Protocol.StateTransferReply, Protocol.StateTransferReply.Builder, Protocol.StateTransferReplyOrBuilder>(
-                  getStateTransferReply(),
-                  getParentForChildren(),
-                  isClean());
-          stateTransferReply_ = null;
-        }
-        return stateTransferReplyBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -11322,27 +11322,27 @@ public final class Protocol {
       "bservedStatesEntry\022\013\n\003key\030\001 \001(\005\022\r\n\005value" +
       "\030\002 \001(\005:\0028\001\"_\n\025MergeProtocolProposal\022\020\n\010s" +
       "erverId\030\001 \001(\t\022\032\n\022n_applied_messages\030\002 \001(" +
-      "\005\022\030\n\020n_known_messages\030\003 \001(\005\"\311\003\n\tOperatio" +
+      "\005\022\030\n\020n_known_messages\030\003 \001(\005\"\232\004\n\tOperatio" +
       "n\022\023\n\013operationId\030\001 \001(\005\022\034\n\004type\030\002 \001(\0162\016.O" +
       "perationType\022\027\n\naccount_id\030\003 \001(\005H\000\210\001\001\022*\n" +
       "\roperationInfo\030\004 \001(\0132\016.BankOperationH\001\210\001" +
       "\001\022*\n\rmoneyTransfer\030\005 \001(\0132\016.MoneyTransfer" +
       "H\002\210\001\001\022*\n\rstateTransfer\030\006 \001(\0132\016.StateTran" +
       "sferH\003\210\001\001\0228\n\024stateTransferRequest\030\007 \001(\0132" +
-      "\025.StateTransferRequestH\004\210\001\001\022:\n\025mergeProt" +
-      "ocolProposal\030\010 \001(\0132\026.MergeProtocolPropos" +
-      "alH\005\210\001\001B\r\n\013_account_idB\020\n\016_operationInfo" +
-      "B\020\n\016_moneyTransferB\020\n\016_stateTransferB\027\n\025" +
-      "_stateTransferRequestB\030\n\026_mergeProtocolP" +
-      "roposal\"\303\002\n\016OperationReply\022\023\n\013operationI" +
-      "d\030\001 \001(\005\022\034\n\004type\030\002 \001(\0162\016.OperationType\022\027\n" +
-      "\naccount_id\030\003 \001(\005H\000\210\001\001\022\023\n\006result\030\004 \001(\010H\001" +
-      "\210\001\001\022\022\n\005value\030\005 \001(\005H\002\210\001\001\0221\n\021account_state" +
-      "ment\030\006 \001(\0132\021.AccountStatementH\003\210\001\001\0226\n\024st" +
-      "ate_transfer_reply\030\007 \001(\0132\023.StateTransfer" +
-      "ReplyH\004\210\001\001B\r\n\013_account_idB\t\n\007_resultB\010\n\006" +
-      "_valueB\024\n\022_account_statementB\027\n\025_state_t" +
-      "ransfer_reply\"\262\001\n\022StateTransferReply\022\020\n\010" +
+      "\025.StateTransferRequestH\004\210\001\001\0226\n\024state_tra" +
+      "nsfer_reply\030\010 \001(\0132\023.StateTransferReplyH\005" +
+      "\210\001\001\022:\n\025mergeProtocolProposal\030\t \001(\0132\026.Mer" +
+      "geProtocolProposalH\006\210\001\001B\r\n\013_account_idB\020" +
+      "\n\016_operationInfoB\020\n\016_moneyTransferB\020\n\016_s" +
+      "tateTransferB\027\n\025_stateTransferRequestB\027\n" +
+      "\025_state_transfer_replyB\030\n\026_mergeProtocol" +
+      "Proposal\"\362\001\n\016OperationReply\022\023\n\013operation" +
+      "Id\030\001 \001(\005\022\034\n\004type\030\002 \001(\0162\016.OperationType\022\027" +
+      "\n\naccount_id\030\003 \001(\005H\000\210\001\001\022\023\n\006result\030\004 \001(\010H" +
+      "\001\210\001\001\022\022\n\005value\030\005 \001(\005H\002\210\001\001\0221\n\021account_stat" +
+      "ement\030\006 \001(\0132\021.AccountStatementH\003\210\001\001B\r\n\013_" +
+      "account_idB\t\n\007_resultB\010\n\006_valueB\024\n\022_acco" +
+      "unt_statement\"\262\001\n\022StateTransferReply\022\020\n\010" +
       "serverId\030\001 \001(\t\022@\n\017accounts_states\030\002 \003(\0132" +
       "\'.StateTransferReply.AccountsStatesEntry" +
       "\032H\n\023AccountsStatesEntry\022\013\n\003key\030\001 \001(\005\022 \n\005" +
@@ -11422,13 +11422,13 @@ public final class Protocol {
     internal_static_Operation_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Operation_descriptor,
-        new java.lang.String[] { "OperationId", "Type", "AccountId", "OperationInfo", "MoneyTransfer", "StateTransfer", "StateTransferRequest", "MergeProtocolProposal", "AccountId", "OperationInfo", "MoneyTransfer", "StateTransfer", "StateTransferRequest", "MergeProtocolProposal", });
+        new java.lang.String[] { "OperationId", "Type", "AccountId", "OperationInfo", "MoneyTransfer", "StateTransfer", "StateTransferRequest", "StateTransferReply", "MergeProtocolProposal", "AccountId", "OperationInfo", "MoneyTransfer", "StateTransfer", "StateTransferRequest", "StateTransferReply", "MergeProtocolProposal", });
     internal_static_OperationReply_descriptor =
       getDescriptor().getMessageTypes().get(8);
     internal_static_OperationReply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_OperationReply_descriptor,
-        new java.lang.String[] { "OperationId", "Type", "AccountId", "Result", "Value", "AccountStatement", "StateTransferReply", "AccountId", "Result", "Value", "AccountStatement", "StateTransferReply", });
+        new java.lang.String[] { "OperationId", "Type", "AccountId", "Result", "Value", "AccountStatement", "AccountId", "Result", "Value", "AccountStatement", });
     internal_static_StateTransferReply_descriptor =
       getDescriptor().getMessageTypes().get(9);
     internal_static_StateTransferReply_fieldAccessorTable = new

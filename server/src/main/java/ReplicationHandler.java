@@ -2,10 +2,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import protocol.Protocol;
 import spread.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -216,7 +213,7 @@ public class ReplicationHandler {
                                                         .build())
                                                 .build();
                                     }
-
+                                    //Reply
                                     try {
                                         networkGroup.sendSafe("server-group", stateTransferOperation);
 
@@ -231,26 +228,77 @@ public class ReplicationHandler {
                         case STATE_TRANSFER_REQUEST:
                             if(IS_LEADER) {
                                 Protocol.StateTransferRequest stateRequest = operation.getStateTransferRequest();
-                                if(stateRequest.getType() == Protocol.StateTransferRequestType.FULL_STATE) {
+                                Protocol.Operation stateOperationReply = null;
 
+                                //Incremental State Request
+                                if (stateRequest.getType() == Protocol.StateTransferRequestType.INCREMENTAL_STATE) {
 
-                                    Protocol.OperationReply stateOperationReply = Protocol.OperationReply.newBuilder()
+                                    Map<Integer, AccountStatement> stateTransfer = bank.getBankPartialState(
+                                            stateRequest.getLastObservedStatesMap());
+
+                                    //Convert into Protocol message
+                                    Map<Integer, Protocol.AccountStatement> protocolAccount = new HashMap<>();
+
+                                    for (Map.Entry<Integer, AccountStatement> e : stateTransfer.entrySet()) {
+                                        protocolAccount.put(e.getKey(), ProtocolUtil.convertAccountStatementToProtocol(e.getValue()));
+                                    }
+
+                                    stateOperationReply = Protocol.Operation.newBuilder()
                                             .setType(Protocol.OperationType.STATE_TRANSFER_REPLY)
                                             .setStateTransferReply(
                                                     Protocol.StateTransferReply.newBuilder()
                                                             .setServerId(stateRequest.getServerId())
-                                                            .putAllAccountsStates().build())
+                                                            .putAllAccountsStates(protocolAccount).build())
+                                            .build();
+
+
+
+                                    //Full State Request
+                                } else if (stateRequest.getType() == Protocol.StateTransferRequestType.FULL_STATE) {
+
+                                    Map<Integer, AccountStatement> stateTransfer = bank.getBankState();
+
+                                    //Convert into Protocol message
+                                    Map<Integer, Protocol.AccountStatement> protocolAccount = new HashMap<>();
+
+                                    for (Map.Entry<Integer, AccountStatement> e : stateTransfer.entrySet()) {
+                                        protocolAccount.put(e.getKey(), ProtocolUtil.convertAccountStatementToProtocol(e.getValue()));
+                                    }
+
+                                    stateOperationReply = Protocol.Operation.newBuilder()
+                                            .setType(Protocol.OperationType.STATE_TRANSFER_REPLY)
+                                            .setStateTransferReply(
+                                                    Protocol.StateTransferReply.newBuilder()
+                                                            .setServerId(stateRequest.getServerId())
+                                                            .putAllAccountsStates(protocolAccount).build())
                                             .build();
                                 }
+                                //Reply
+                                try {
+                                    networkGroup.sendSafe("server-group", stateOperationReply);
+
+                                    System.out.println(Colors.ANSI_GREEN + "> STATE TRANSFER Incremental or full State." + Colors.ANSI_RESET);
+
+                                } catch (SpreadException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                            // ao receber este pedido, valido se sou o lider e se for então respondo
-                            // com o estado pedido
-                            // ATENÇÃO validar se este state transfer request é incremental ou completo
                             break;
-                        //case STATE_TRANSFER_REPLY:
-                            // Aqui valido se o server id que vem na resposta corresponde ao meu proprio id, se for
-                        // entao criem uma funcao que aplica o estado recebido
-                          //  break;
+                        case STATE_TRANSFER_REPLY:
+
+                            Protocol.StateTransferReply stateReply = operation.getStateTransferReply();
+
+                            if(stateReply.getServerId().equals(serverId)){
+                                Map<Integer, Protocol.AccountStatement> mapAccountStatement = stateReply.getAccountsStatesMap();
+
+                                for(Map.Entry<Integer, Protocol.AccountStatement> e : mapAccountStatement.entrySet()) {
+                                    for (Protocol.MovementInfo mov : e.getValue().getMovementsList()) {
+                                        bank.updateAccountState(e.getKey(), ProtocolUtil.convertProtocolMovementInfoToMovementInfo(mov));
+                                    }
+                                }
+                            }
+
+                          break;
                         default:
                             System.err.println("> Unknown operation!");
                             break;

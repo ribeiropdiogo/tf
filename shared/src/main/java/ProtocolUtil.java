@@ -2,8 +2,11 @@ import com.google.protobuf.Timestamp;
 import protocol.Protocol;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ProtocolUtil {
 
@@ -78,5 +81,18 @@ public class ProtocolUtil {
                 .setType(Protocol.StateTransferType.INTEREST_CREDIT_OPERATION)
                 .putAllAppliedCreditAccounts(appliedCreditAccountsProtocol)
                 .build();
+    }
+
+    public static Protocol.AccountStatement convertAccountStatementToProtocol(AccountStatement accountStatement){
+        List<Protocol.MovementInfo> listMov = new ArrayList<>();
+
+
+        for (MovementInfo m : accountStatement.getMovements())
+            listMov.add(convertMovementInfoToProtocol(m));
+
+
+        return Protocol.AccountStatement.newBuilder().addAllMovements(listMov).build();
+
+
     }
 }
