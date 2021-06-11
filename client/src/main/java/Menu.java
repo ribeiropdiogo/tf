@@ -146,7 +146,7 @@ public class Menu {
 
         void printMenu(){
             System.out.println("------------------------- MOVEMENT OPERATION -------------------------");
-            System.out.println("\n> Insert the Account Id: ");
+            System.out.println("\n> Insert the Account Id (Between 1 and 10): ");
             accountId = scan.nextInt();
             System.out.println("\n> Insert the amount (positive - deposit, negative - withdraw): ");
             value = scan.nextInt();
@@ -166,9 +166,9 @@ public class Menu {
 
         void printMenu(){
             System.out.println("------------------------- TRANSFER OPERATION -------------------------");
-            System.out.println("\n> Insert the Account Id to withdraw: ");
+            System.out.println("\n> Insert the Account Id to withdraw (Between 1 and 10): ");
             withdrawAccountId = scan.nextInt();
-            System.out.println("\n> Insert the Account Id to deposit: ");
+            System.out.println("\n> Insert the Account Id to deposit (Between 1 and 10): ");
             depositAccountId = scan.nextInt();
             while (amount == 0){
                 System.out.println("\n> Insert the amount to transfer: ");
@@ -191,7 +191,7 @@ public class Menu {
 
         void printMenu(){
             System.out.println("--------------------- ACCOUNT STATEMENT OPERATION --------------------");
-            System.out.println("\n> Insert the Account Id: ");
+            System.out.println("\n> Insert the Account Id (Between 1 and 10): ");
             accountId = scan.nextInt();
         }
     }

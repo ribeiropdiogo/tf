@@ -6,8 +6,6 @@ import protocol.Protocol;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.BiConsumer;
 
 public class ClientRequestHandler {
 
@@ -15,19 +13,14 @@ public class ClientRequestHandler {
 
     private final ReplicationHandler replicationHandler;
 
-    // HashSet that contains all accounts that are currently locked
-    private final Set<Integer> accountsLocked;
-
-    // Queue that contains all the client requests that are currently on hold to be processed
-    private final Queue<BiConsumer<Address, Protocol.Operation>> clientRequestsOnHold;
+    private final OperationConcurrencyControl concurrencyControl;
 
     private Network network = null;
 
     public ClientRequestHandler(Bank bank, ReplicationHandler replicationHandler) {
         this.bank = bank;
         this.replicationHandler = replicationHandler;
-        accountsLocked = new HashSet<>();
-        clientRequestsOnHold = new LinkedBlockingQueue<>();
+        this.concurrencyControl = new OperationConcurrencyControl();
     }
 
 
@@ -100,52 +93,56 @@ public class ClientRequestHandler {
 
     private void movementHandler(Network network){
         network.registerRequestHandler("movement-request", (a, m) -> {
-
-            int accountId = m.getAccountId();
-            int amount = m.getOperationInfo().getValue();
-            String description = m.getOperationInfo().getDescription();
-
-            System.out.println("> Movement Operation " + m.getOperationId() + " on the account " + accountId
-                    + " with the amount: " + amount + " and description: " + description
-                    + " from " + a + ".");
-
-            if (accountsLocked.contains(accountId)){
-
-            }
-
-            // Obtain the time from an external NTP server and execute the movement
-            ImmutablePair<Boolean, MovementInfo> opResult = bank.movement(
-                    accountId, amount, description, NTPTime.getNTPTimestamp()
-            );
-
-            // If the operation had success send the state update to backup servers
-            if (opResult.getLeft()){
-
-                // Create a completable future for the client request response
-                CompletableFuture<Void> clientResponse = new CompletableFuture<>();
-
-                // Start the replication to other replicas
-                String stateTransferId = UUID.randomUUID().toString();
-                MovementInfo movementInfo = opResult.getRight();
-                replicationHandler.updateReplicasState(
-                        stateTransferId,
-                        ProtocolUtil.createStateTransferFromMovementOperation(stateTransferId, accountId, movementInfo),
-                        clientResponse
-                );
-
-                clientResponse.thenAccept(v -> {
-                    System.out.println(Colors.ANSI_BLUE + "> The client request is complete and the state is" +
-                            " updated in all backup servers, sending answer to client." + Colors.ANSI_RESET);
-                    movementResponse(network, a, m, true);
-                });
-
-            }else { // Send immediately the response to the client
-                movementResponse(network, a, m, false);
+            if (concurrencyControl.acquireLock(a, m)){
+                System.out.println("> No concurrency, executing the Movement Operation...");
+                processMovementRequest(a, m);
+            } else {
+                System.out.println("> Concurrency detected, saving this Movement Operation...");
             }
         });
     }
 
-    private void movementResponse(Network network, Address a, Protocol.Operation m, boolean opResult) {
+    private void processMovementRequest(Address a, Protocol.Operation m){
+        int accountId = m.getAccountId();
+        int amount = m.getOperationInfo().getValue();
+        String description = m.getOperationInfo().getDescription();
+
+        System.out.println("> Movement Operation " + m.getOperationId() + " on the account " + accountId
+                + " with the amount: " + amount + " and description: " + description
+                + " from " + a + ".");
+
+        // Obtain the time from an external NTP server and execute the movement
+        ImmutablePair<Boolean, MovementInfo> opResult = bank.movement(
+                accountId, amount, description, NTPTime.getNTPTimestamp()
+        );
+
+        // If the operation had success send the state update to backup servers
+        if (opResult.getLeft()){
+
+            // Create a completable future for the client request response
+            CompletableFuture<Void> clientResponse = new CompletableFuture<>();
+
+            // Start the replication to other replicas
+            String stateTransferId = UUID.randomUUID().toString();
+            MovementInfo movementInfo = opResult.getRight();
+            replicationHandler.updateReplicasState(
+                    stateTransferId,
+                    ProtocolUtil.createStateTransferFromMovementOperation(stateTransferId, accountId, movementInfo),
+                    clientResponse
+            );
+
+            clientResponse.thenAccept(v -> {
+                System.out.println(Colors.ANSI_BLUE + "> The client request is complete and the state is" +
+                        " updated in all backup servers, sending answer to client." + Colors.ANSI_RESET);
+                movementResponse(a, m, true);
+            });
+
+        }else { // Send immediately the response to the client
+            movementResponse(a, m, false);
+        }
+    }
+
+    private void movementResponse(Address a, Protocol.Operation m, boolean opResult) {
         Protocol.OperationReply operationReply = Protocol.OperationReply.newBuilder()
                 .setOperationId(m.getOperationId())
                 .setType(Protocol.OperationType.MOVEMENT)
@@ -157,6 +154,10 @@ public class ClientRequestHandler {
                 .thenRun(()->{
                     System.out.println("> Movement Operation " + operationReply.getOperationId()
                             + " response sent -> " + opResult);
+
+                    // Process other requests on hold and unlock account
+                    ImmutablePair<Address, Protocol.Operation> request = concurrencyControl.unlock(m.getAccountId());
+                    processRequestOnHold(request);
                 })
                 .exceptionally(t->{
                     t.printStackTrace();
@@ -170,50 +171,59 @@ public class ClientRequestHandler {
 
     private void transferHandler(Network network){
         network.registerRequestHandler("transfer-request", (a, m) -> {
-
-            int withdrawAccountId = m.getMoneyTransfer().getAccountWithdraw();
-            int depositAccountId = m.getMoneyTransfer().getAccountDeposit();
-            int amount = m.getOperationInfo().getValue();
-            String description = m.getOperationInfo().getDescription();
-
-            System.out.println("> Transfer Operation " + m.getOperationId() + " between " + withdrawAccountId + " and "
-                    + depositAccountId + " with the amount " + amount + " and description: " + description
-                    + " from " + a + ".");
-
-            // Obtain the time from an external NTP server and make the transfer
-            ImmutableTriple<Boolean, MovementInfo, MovementInfo> opResult = bank.transfer(
-                    withdrawAccountId, depositAccountId, amount, description, NTPTime.getNTPTimestamp()
-            );
-
-            // If the operation had success send the state update to backup servers
-            if (opResult.getLeft()){
-
-                // Create a completable future for the client request response
-                CompletableFuture<Void> clientResponse = new CompletableFuture<>();
-
-                // Start the replication to other replicas
-                String stateTransferId = UUID.randomUUID().toString();
-                MovementInfo withdrawMovementInfo = opResult.getMiddle();
-                MovementInfo depositMovementInfo = opResult.getRight();
-                replicationHandler.updateReplicasState(
-                        stateTransferId,
-                        ProtocolUtil.createStateTransferFromTransferOperation(
-                                stateTransferId, withdrawAccountId, withdrawMovementInfo, depositAccountId, depositMovementInfo
-                        ),
-                        clientResponse
-                );
-
-                clientResponse.thenAccept(v -> {
-                    System.out.println(Colors.ANSI_BLUE + "> The client request is complete and the state is" +
-                            " updated in all backup servers, sending answer to client." + Colors.ANSI_RESET);
-                    transferResponse(network, a, m, true);
-                });
-
-            }else { // Send immediately the response to the client
-                transferResponse(network, a, m, false);
+            if (concurrencyControl.acquireLock(a, m)){
+                System.out.println("> No concurrency, executing the Transfer Operation...");
+                processTransferRequest(a, m);
+            } else {
+                System.out.println("> Concurrency detected, saving this Transfer Operation...");
             }
         });
     }
+
+    private void processTransferRequest(Address a, Protocol.Operation m){
+        int withdrawAccountId = m.getMoneyTransfer().getAccountWithdraw();
+        int depositAccountId = m.getMoneyTransfer().getAccountDeposit();
+        int amount = m.getOperationInfo().getValue();
+        String description = m.getOperationInfo().getDescription();
+
+        System.out.println("> Transfer Operation " + m.getOperationId() + " between " + withdrawAccountId + " and "
+                + depositAccountId + " with the amount " + amount + " and description: " + description
+                + " from " + a + ".");
+
+        // Obtain the time from an external NTP server and make the transfer
+        ImmutableTriple<Boolean, MovementInfo, MovementInfo> opResult = bank.transfer(
+                withdrawAccountId, depositAccountId, amount, description, NTPTime.getNTPTimestamp()
+        );
+
+        // If the operation had success send the state update to backup servers
+        if (opResult.getLeft()){
+
+            // Create a completable future for the client request response
+            CompletableFuture<Void> clientResponse = new CompletableFuture<>();
+
+            // Start the replication to other replicas
+            String stateTransferId = UUID.randomUUID().toString();
+            MovementInfo withdrawMovementInfo = opResult.getMiddle();
+            MovementInfo depositMovementInfo = opResult.getRight();
+            replicationHandler.updateReplicasState(
+                    stateTransferId,
+                    ProtocolUtil.createStateTransferFromTransferOperation(
+                            stateTransferId, withdrawAccountId, withdrawMovementInfo, depositAccountId, depositMovementInfo
+                    ),
+                    clientResponse
+            );
+
+            clientResponse.thenAccept(v -> {
+                System.out.println(Colors.ANSI_BLUE + "> The client request is complete and the state is" +
+                        " updated in all backup servers, sending answer to client." + Colors.ANSI_RESET);
+                transferResponse(network, a, m, true);
+            });
+
+        }else { // Send immediately the response to the client
+            transferResponse(network, a, m, false);
+        }
+    }
+
 
     private void transferResponse(Network network, Address a, Protocol.Operation m, boolean opResult) {
         Protocol.OperationReply operationReply = Protocol.OperationReply.newBuilder()
@@ -226,6 +236,16 @@ public class ClientRequestHandler {
                 .thenRun(()->{
                     System.out.println("> Transfer Operation " + operationReply.getOperationId() +
                             " response sent -> " + opResult);
+
+                    int withdrawAccId = m.getMoneyTransfer().getAccountWithdraw();
+                    int depositAccId = m.getMoneyTransfer().getAccountDeposit();
+                    List<Integer> accountsToUnlock = new ArrayList<>();
+                    accountsToUnlock.add(withdrawAccId);
+                    accountsToUnlock.add(depositAccId);
+
+                    // Process other requests on hold and unlock account
+                    ImmutablePair<Address, Protocol.Operation> request = concurrencyControl.unlock(accountsToUnlock);
+                    processRequestOnHold(request);
                 })
                 .exceptionally(t->{
                     t.printStackTrace();
@@ -290,41 +310,51 @@ public class ClientRequestHandler {
     private void interestCreditHandler(Network network){
         network.registerRequestHandler("interest-credit-request", (a, m) -> {
 
-            System.out.println("> Interest Credit Operation " + m.getOperationId() + " from " + a + ".");
-
-            // Obtain the time from an external NTP server and execute the interest credit operation
-            Map<Integer, MovementInfo> appliedCreditAccounts = bank.interestCredit(
-                    ConstantState.INTEREST_RATE, NTPTime.getNTPTimestamp()
-            );
-
-            // If the number of applied interest credit accounts is not empty send the state update
-            // to backup servers on the accounts which the balance changed
-            if (!appliedCreditAccounts.isEmpty()){
-
-                // Create a completable future for the client request response
-                CompletableFuture<Void> clientResponse = new CompletableFuture<>();
-
-                // Start the replication to other replicas
-                String stateTransferId = UUID.randomUUID().toString();
-                replicationHandler.updateReplicasState(
-                        stateTransferId,
-                        ProtocolUtil.createStateTransferFromInterestCreditOperation(
-                                stateTransferId, appliedCreditAccounts
-                        ),
-                        clientResponse
-                );
-
-                clientResponse.thenAccept(v -> {
-                    System.out.println(Colors.ANSI_BLUE + "> The client request is complete and the state is" +
-                            " updated in all backup servers, sending answer to client." + Colors.ANSI_RESET);
-                    interestCreditResponse(network, a, m);
-                });
-
-
-            }else { // Send immediately the response to the client
-                interestCreditResponse(network, a, m);
+            // If all locks acquired process request
+            if (concurrencyControl.acquireLock(a, m)){
+                System.out.println("> No concurrency, executing the Interest Credit Operation...");
+                processInterestCreditRequest(a, m);
+            } else {
+                System.out.println("> Concurrency detected in some accounts for the Interest Credit operation. Saving" +
+                        " the request to be replayed later.");
             }
         });
+    }
+
+    private void processInterestCreditRequest(Address a, Protocol.Operation m){
+        System.out.println("> Interest Credit Operation " + m.getOperationId() + " from " + a + ".");
+
+        // Obtain the time from an external NTP server and execute the interest credit operation
+        Map<Integer, MovementInfo> appliedCreditAccounts = bank.interestCredit(
+                ConstantState.INTEREST_RATE, NTPTime.getNTPTimestamp()
+        );
+
+        // If the number of applied interest credit accounts is not empty send the state update
+        // to backup servers on the accounts which the balance changed
+        if (!appliedCreditAccounts.isEmpty()){
+
+            // Create a completable future for the client request response
+            CompletableFuture<Void> clientResponse = new CompletableFuture<>();
+
+            // Start the replication to other replicas
+            String stateTransferId = UUID.randomUUID().toString();
+            replicationHandler.updateReplicasState(
+                    stateTransferId,
+                    ProtocolUtil.createStateTransferFromInterestCreditOperation(
+                            stateTransferId, appliedCreditAccounts
+                    ),
+                    clientResponse
+            );
+
+            clientResponse.thenAccept(v -> {
+                System.out.println(Colors.ANSI_BLUE + "> The client request is complete and the state is" +
+                        " updated in all backup servers, sending answer to client." + Colors.ANSI_RESET);
+                interestCreditResponse(network, a, m);
+            });
+
+        }else { // Send immediately the response to the client
+            interestCreditResponse(network, a, m);
+        }
     }
 
     private void interestCreditResponse(Network network, Address a, Protocol.Operation m) {
@@ -336,10 +366,40 @@ public class ClientRequestHandler {
         network.send(a, "interest-credit-response", operationReply)
                 .thenRun(()->{
                     System.out.println("> Interest Credit Operation " + operationReply.getOperationId() + " response sent.");
+
+                    List<Integer> existingAccounts = new ArrayList<>();
+                    ConstantState.getAccounts().forEach(acc -> existingAccounts.add(acc.getId()));
+
+                    // Process other requests on hold and unlock account
+                    ImmutablePair<Address, Protocol.Operation> request = concurrencyControl.unlock(existingAccounts);
+                    processRequestOnHold(request);
                 })
                 .exceptionally(t->{
                     t.printStackTrace();
                     return null;
                 });
+    }
+
+    /******************************************************************************
+     *                        REQUEST PROCESSING AFTER UNLOCK                     *
+     ******************************************************************************/
+
+    private void processRequestOnHold(ImmutablePair<Address, Protocol.Operation> request){
+        if (request != null){
+            System.out.println(Colors.ANSI_BLUE + "> Processing request that was on hold to be processed." + Colors.ANSI_RESET);
+            switch (request.getRight().getType()){
+                case MOVEMENT:
+                    processMovementRequest(request.getLeft(), request.getRight());
+                    break;
+                case TRANSFER:
+                    processTransferRequest(request.getLeft(), request.getRight());
+                    break;
+                case INTEREST_CREDIT:
+                    processInterestCreditRequest(request.getLeft(), request.getRight());
+                    break;
+            }
+        } else {
+            System.out.println(Colors.ANSI_BLUE + "> No requests on hold can be processed." + Colors.ANSI_RESET);
+        }
     }
 }

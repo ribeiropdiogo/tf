@@ -189,7 +189,16 @@ public class ReplicationHandler {
                                         clientRequestHandler.openSocket();
                                     }
                                 } else {
+                                    // I applied message
+                                    if (knownMessagesList.size() > 0){
+                                        IS_STATE_POISONED = true;
+                                        // Clear all known messages
+                                        knownMessagesList.clear();
+                                        NR_KNOWN_MESSAGES = 0;
+                                    }
                                     System.out.println(Colors.ANSI_CYAN + "> I AM NOT the LEADER." + Colors.ANSI_RESET);
+
+                                    // TODO: Compara propostas, se a minha proposta for igual à do lider então não preciso de pedir estado
                                     // todo: request state to leader
                                     // enviar o meu id na mensagem para dizer quem está a pedir o estado
                                 }
