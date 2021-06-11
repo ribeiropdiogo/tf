@@ -48,17 +48,21 @@ public final class Protocol {
      * GROUP COMMUNICATION OPERATIONS
      * </pre>
      *
-     * <code>STATE_TRANSFER = 5;</code>
+     * <code>STATE_UPDATE = 5;</code>
      */
-    STATE_TRANSFER(5),
+    STATE_UPDATE(5),
     /**
      * <code>STATE_TRANSFER_REQUEST = 6;</code>
      */
     STATE_TRANSFER_REQUEST(6),
     /**
-     * <code>MERGE_PROTOCOL_PROPOSAL = 7;</code>
+     * <code>STATE_TRANSFER_REPLY = 7;</code>
      */
-    MERGE_PROTOCOL_PROPOSAL(7),
+    STATE_TRANSFER_REPLY(7),
+    /**
+     * <code>MERGE_PROTOCOL_PROPOSAL = 8;</code>
+     */
+    MERGE_PROTOCOL_PROPOSAL(8),
     UNRECOGNIZED(-1),
     ;
 
@@ -91,17 +95,21 @@ public final class Protocol {
      * GROUP COMMUNICATION OPERATIONS
      * </pre>
      *
-     * <code>STATE_TRANSFER = 5;</code>
+     * <code>STATE_UPDATE = 5;</code>
      */
-    public static final int STATE_TRANSFER_VALUE = 5;
+    public static final int STATE_UPDATE_VALUE = 5;
     /**
      * <code>STATE_TRANSFER_REQUEST = 6;</code>
      */
     public static final int STATE_TRANSFER_REQUEST_VALUE = 6;
     /**
-     * <code>MERGE_PROTOCOL_PROPOSAL = 7;</code>
+     * <code>STATE_TRANSFER_REPLY = 7;</code>
      */
-    public static final int MERGE_PROTOCOL_PROPOSAL_VALUE = 7;
+    public static final int STATE_TRANSFER_REPLY_VALUE = 7;
+    /**
+     * <code>MERGE_PROTOCOL_PROPOSAL = 8;</code>
+     */
+    public static final int MERGE_PROTOCOL_PROPOSAL_VALUE = 8;
 
 
     public final int getNumber() {
@@ -133,9 +141,10 @@ public final class Protocol {
         case 2: return TRANSFER;
         case 3: return ACCOUNT_STATEMENT;
         case 4: return INTEREST_CREDIT;
-        case 5: return STATE_TRANSFER;
+        case 5: return STATE_UPDATE;
         case 6: return STATE_TRANSFER_REQUEST;
-        case 7: return MERGE_PROTOCOL_PROPOSAL;
+        case 7: return STATE_TRANSFER_REPLY;
+        case 8: return MERGE_PROTOCOL_PROPOSAL;
         default: return null;
       }
     }
@@ -193,13 +202,17 @@ public final class Protocol {
   }
 
   /**
-   * Protobuf enum {@code StateTransferType}
+   * <pre>
+   * Represents the possible types of state update message
+   * </pre>
+   *
+   * Protobuf enum {@code StateUpdateType}
    */
-  public enum StateTransferType
+  public enum StateUpdateType
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
      * <pre>
-     * STATE TRANSFER POSSIBLE TYPES
+     * UPDATE STATE POSSIBLE TYPES
      * </pre>
      *
      * <code>TRANSFER_OPERATION = 0;</code>
@@ -218,7 +231,7 @@ public final class Protocol {
 
     /**
      * <pre>
-     * STATE TRANSFER POSSIBLE TYPES
+     * UPDATE STATE POSSIBLE TYPES
      * </pre>
      *
      * <code>TRANSFER_OPERATION = 0;</code>
@@ -248,7 +261,7 @@ public final class Protocol {
      * @deprecated Use {@link #forNumber(int)} instead.
      */
     @java.lang.Deprecated
-    public static StateTransferType valueOf(int value) {
+    public static StateUpdateType valueOf(int value) {
       return forNumber(value);
     }
 
@@ -256,7 +269,7 @@ public final class Protocol {
      * @param value The numeric wire value of the corresponding enum entry.
      * @return The enum associated with the given numeric wire value.
      */
-    public static StateTransferType forNumber(int value) {
+    public static StateUpdateType forNumber(int value) {
       switch (value) {
         case 0: return TRANSFER_OPERATION;
         case 1: return MOVEMENT_OPERATION;
@@ -265,15 +278,15 @@ public final class Protocol {
       }
     }
 
-    public static com.google.protobuf.Internal.EnumLiteMap<StateTransferType>
+    public static com.google.protobuf.Internal.EnumLiteMap<StateUpdateType>
         internalGetValueMap() {
       return internalValueMap;
     }
     private static final com.google.protobuf.Internal.EnumLiteMap<
-        StateTransferType> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<StateTransferType>() {
-            public StateTransferType findValueByNumber(int number) {
-              return StateTransferType.forNumber(number);
+        StateUpdateType> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<StateUpdateType>() {
+            public StateUpdateType findValueByNumber(int number) {
+              return StateUpdateType.forNumber(number);
             }
           };
 
@@ -294,9 +307,9 @@ public final class Protocol {
       return Protocol.getDescriptor().getEnumTypes().get(1);
     }
 
-    private static final StateTransferType[] VALUES = values();
+    private static final StateUpdateType[] VALUES = values();
 
-    public static StateTransferType valueOf(
+    public static StateUpdateType valueOf(
         com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
       if (desc.getType() != getDescriptor()) {
         throw new java.lang.IllegalArgumentException(
@@ -310,14 +323,19 @@ public final class Protocol {
 
     private final int value;
 
-    private StateTransferType(int value) {
+    private StateUpdateType(int value) {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:StateTransferType)
+    // @@protoc_insertion_point(enum_scope:StateUpdateType)
   }
 
   /**
+   * <pre>
+   * Represents the type of the state transfer request, or full state in case of poisoned state
+   * or incremental
+   * </pre>
+   *
    * Protobuf enum {@code StateTransferRequestType}
    */
   public enum StateTransferRequestType
@@ -3415,8 +3433,8 @@ public final class Protocol {
 
   }
 
-  public interface StateTransferOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:StateTransfer)
+  public interface StateUpdateOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:StateUpdate)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -3432,15 +3450,15 @@ public final class Protocol {
         getStateTransferIdBytes();
 
     /**
-     * <code>.StateTransferType type = 2;</code>
+     * <code>.StateUpdateType type = 2;</code>
      * @return The enum numeric value on the wire for type.
      */
     int getTypeValue();
     /**
-     * <code>.StateTransferType type = 2;</code>
+     * <code>.StateUpdateType type = 2;</code>
      * @return The type.
      */
-    Protocol.StateTransferType getType();
+    Protocol.StateUpdateType getType();
 
     /**
      * <code>repeated .MovementInfo stateInfo = 3;</code>
@@ -3471,7 +3489,7 @@ public final class Protocol {
      * Represents a single account id, useful for movement operation
      * </pre>
      *
-     * <code>int32 account_id = 4;</code>
+     * <code>optional int32 account_id = 4;</code>
      * @return Whether the accountId field is set.
      */
     boolean hasAccountId();
@@ -3480,7 +3498,7 @@ public final class Protocol {
      * Represents a single account id, useful for movement operation
      * </pre>
      *
-     * <code>int32 account_id = 4;</code>
+     * <code>optional int32 account_id = 4;</code>
      * @return The accountId.
      */
     int getAccountId();
@@ -3490,7 +3508,7 @@ public final class Protocol {
      * Represents the account id's of the transfer between two accounts
      * </pre>
      *
-     * <code>.MoneyTransfer transfer = 5;</code>
+     * <code>optional .MoneyTransfer transfer = 5;</code>
      * @return Whether the transfer field is set.
      */
     boolean hasTransfer();
@@ -3499,7 +3517,7 @@ public final class Protocol {
      * Represents the account id's of the transfer between two accounts
      * </pre>
      *
-     * <code>.MoneyTransfer transfer = 5;</code>
+     * <code>optional .MoneyTransfer transfer = 5;</code>
      * @return The transfer.
      */
     Protocol.MoneyTransfer getTransfer();
@@ -3508,7 +3526,7 @@ public final class Protocol {
      * Represents the account id's of the transfer between two accounts
      * </pre>
      *
-     * <code>.MoneyTransfer transfer = 5;</code>
+     * <code>optional .MoneyTransfer transfer = 5;</code>
      */
     Protocol.MoneyTransferOrBuilder getTransferOrBuilder();
 
@@ -3571,18 +3589,18 @@ public final class Protocol {
    * Message that represents a state transfer
    * </pre>
    *
-   * Protobuf type {@code StateTransfer}
+   * Protobuf type {@code StateUpdate}
    */
-  public static final class StateTransfer extends
+  public static final class StateUpdate extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:StateTransfer)
-      StateTransferOrBuilder {
+      // @@protoc_insertion_point(message_implements:StateUpdate)
+      StateUpdateOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use StateTransfer.newBuilder() to construct.
-    private StateTransfer(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use StateUpdate.newBuilder() to construct.
+    private StateUpdate(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private StateTransfer() {
+    private StateUpdate() {
       stateTransferId_ = "";
       type_ = 0;
       stateInfo_ = java.util.Collections.emptyList();
@@ -3592,7 +3610,7 @@ public final class Protocol {
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new StateTransfer();
+      return new StateUpdate();
     }
 
     @java.lang.Override
@@ -3600,7 +3618,7 @@ public final class Protocol {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private StateTransfer(
+    private StateUpdate(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -3695,7 +3713,7 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return Protocol.internal_static_StateTransfer_descriptor;
+      return Protocol.internal_static_StateUpdate_descriptor;
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -3713,9 +3731,9 @@ public final class Protocol {
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return Protocol.internal_static_StateTransfer_fieldAccessorTable
+      return Protocol.internal_static_StateUpdate_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              Protocol.StateTransfer.class, Protocol.StateTransfer.Builder.class);
+              Protocol.StateUpdate.class, Protocol.StateUpdate.Builder.class);
     }
 
     private int bitField0_;
@@ -3760,20 +3778,20 @@ public final class Protocol {
     public static final int TYPE_FIELD_NUMBER = 2;
     private int type_;
     /**
-     * <code>.StateTransferType type = 2;</code>
+     * <code>.StateUpdateType type = 2;</code>
      * @return The enum numeric value on the wire for type.
      */
     @java.lang.Override public int getTypeValue() {
       return type_;
     }
     /**
-     * <code>.StateTransferType type = 2;</code>
+     * <code>.StateUpdateType type = 2;</code>
      * @return The type.
      */
-    @java.lang.Override public Protocol.StateTransferType getType() {
+    @java.lang.Override public Protocol.StateUpdateType getType() {
       @SuppressWarnings("deprecation")
-      Protocol.StateTransferType result = Protocol.StateTransferType.valueOf(type_);
-      return result == null ? Protocol.StateTransferType.UNRECOGNIZED : result;
+      Protocol.StateUpdateType result = Protocol.StateUpdateType.valueOf(type_);
+      return result == null ? Protocol.StateUpdateType.UNRECOGNIZED : result;
     }
 
     public static final int STATEINFO_FIELD_NUMBER = 3;
@@ -3823,7 +3841,7 @@ public final class Protocol {
      * Represents a single account id, useful for movement operation
      * </pre>
      *
-     * <code>int32 account_id = 4;</code>
+     * <code>optional int32 account_id = 4;</code>
      * @return Whether the accountId field is set.
      */
     @java.lang.Override
@@ -3835,7 +3853,7 @@ public final class Protocol {
      * Represents a single account id, useful for movement operation
      * </pre>
      *
-     * <code>int32 account_id = 4;</code>
+     * <code>optional int32 account_id = 4;</code>
      * @return The accountId.
      */
     @java.lang.Override
@@ -3850,7 +3868,7 @@ public final class Protocol {
      * Represents the account id's of the transfer between two accounts
      * </pre>
      *
-     * <code>.MoneyTransfer transfer = 5;</code>
+     * <code>optional .MoneyTransfer transfer = 5;</code>
      * @return Whether the transfer field is set.
      */
     @java.lang.Override
@@ -3862,7 +3880,7 @@ public final class Protocol {
      * Represents the account id's of the transfer between two accounts
      * </pre>
      *
-     * <code>.MoneyTransfer transfer = 5;</code>
+     * <code>optional .MoneyTransfer transfer = 5;</code>
      * @return The transfer.
      */
     @java.lang.Override
@@ -3874,7 +3892,7 @@ public final class Protocol {
      * Represents the account id's of the transfer between two accounts
      * </pre>
      *
-     * <code>.MoneyTransfer transfer = 5;</code>
+     * <code>optional .MoneyTransfer transfer = 5;</code>
      */
     @java.lang.Override
     public Protocol.MoneyTransferOrBuilder getTransferOrBuilder() {
@@ -3887,7 +3905,7 @@ public final class Protocol {
           java.lang.Integer, Protocol.MovementInfo> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.Integer, Protocol.MovementInfo>newDefaultInstance(
-                  Protocol.internal_static_StateTransfer_AppliedCreditAccountsEntry_descriptor, 
+                  Protocol.internal_static_StateUpdate_AppliedCreditAccountsEntry_descriptor, 
                   com.google.protobuf.WireFormat.FieldType.INT32,
                   0,
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -3995,7 +4013,7 @@ public final class Protocol {
       if (!getStateTransferIdBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, stateTransferId_);
       }
-      if (type_ != Protocol.StateTransferType.TRANSFER_OPERATION.getNumber()) {
+      if (type_ != Protocol.StateUpdateType.TRANSFER_OPERATION.getNumber()) {
         output.writeEnum(2, type_);
       }
       for (int i = 0; i < stateInfo_.size(); i++) {
@@ -4025,7 +4043,7 @@ public final class Protocol {
       if (!getStateTransferIdBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, stateTransferId_);
       }
-      if (type_ != Protocol.StateTransferType.TRANSFER_OPERATION.getNumber()) {
+      if (type_ != Protocol.StateUpdateType.TRANSFER_OPERATION.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, type_);
       }
@@ -4061,10 +4079,10 @@ public final class Protocol {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof Protocol.StateTransfer)) {
+      if (!(obj instanceof Protocol.StateUpdate)) {
         return super.equals(obj);
       }
-      Protocol.StateTransfer other = (Protocol.StateTransfer) obj;
+      Protocol.StateUpdate other = (Protocol.StateUpdate) obj;
 
       if (!getStateTransferId()
           .equals(other.getStateTransferId())) return false;
@@ -4119,69 +4137,69 @@ public final class Protocol {
       return hash;
     }
 
-    public static Protocol.StateTransfer parseFrom(
+    public static Protocol.StateUpdate parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Protocol.StateTransfer parseFrom(
+    public static Protocol.StateUpdate parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Protocol.StateTransfer parseFrom(
+    public static Protocol.StateUpdate parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Protocol.StateTransfer parseFrom(
+    public static Protocol.StateUpdate parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Protocol.StateTransfer parseFrom(byte[] data)
+    public static Protocol.StateUpdate parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Protocol.StateTransfer parseFrom(
+    public static Protocol.StateUpdate parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Protocol.StateTransfer parseFrom(java.io.InputStream input)
+    public static Protocol.StateUpdate parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static Protocol.StateTransfer parseFrom(
+    public static Protocol.StateUpdate parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static Protocol.StateTransfer parseDelimitedFrom(java.io.InputStream input)
+    public static Protocol.StateUpdate parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static Protocol.StateTransfer parseDelimitedFrom(
+    public static Protocol.StateUpdate parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static Protocol.StateTransfer parseFrom(
+    public static Protocol.StateUpdate parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static Protocol.StateTransfer parseFrom(
+    public static Protocol.StateUpdate parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4194,7 +4212,7 @@ public final class Protocol {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(Protocol.StateTransfer prototype) {
+    public static Builder newBuilder(Protocol.StateUpdate prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -4214,15 +4232,15 @@ public final class Protocol {
      * Message that represents a state transfer
      * </pre>
      *
-     * Protobuf type {@code StateTransfer}
+     * Protobuf type {@code StateUpdate}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:StateTransfer)
-        Protocol.StateTransferOrBuilder {
+        // @@protoc_insertion_point(builder_implements:StateUpdate)
+        Protocol.StateUpdateOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return Protocol.internal_static_StateTransfer_descriptor;
+        return Protocol.internal_static_StateUpdate_descriptor;
       }
 
       @SuppressWarnings({"rawtypes"})
@@ -4250,12 +4268,12 @@ public final class Protocol {
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return Protocol.internal_static_StateTransfer_fieldAccessorTable
+        return Protocol.internal_static_StateUpdate_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                Protocol.StateTransfer.class, Protocol.StateTransfer.Builder.class);
+                Protocol.StateUpdate.class, Protocol.StateUpdate.Builder.class);
       }
 
-      // Construct using Protocol.StateTransfer.newBuilder()
+      // Construct using Protocol.StateUpdate.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -4300,17 +4318,17 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return Protocol.internal_static_StateTransfer_descriptor;
+        return Protocol.internal_static_StateUpdate_descriptor;
       }
 
       @java.lang.Override
-      public Protocol.StateTransfer getDefaultInstanceForType() {
-        return Protocol.StateTransfer.getDefaultInstance();
+      public Protocol.StateUpdate getDefaultInstanceForType() {
+        return Protocol.StateUpdate.getDefaultInstance();
       }
 
       @java.lang.Override
-      public Protocol.StateTransfer build() {
-        Protocol.StateTransfer result = buildPartial();
+      public Protocol.StateUpdate build() {
+        Protocol.StateUpdate result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -4318,8 +4336,8 @@ public final class Protocol {
       }
 
       @java.lang.Override
-      public Protocol.StateTransfer buildPartial() {
-        Protocol.StateTransfer result = new Protocol.StateTransfer(this);
+      public Protocol.StateUpdate buildPartial() {
+        Protocol.StateUpdate result = new Protocol.StateUpdate(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         result.stateTransferId_ = stateTransferId_;
@@ -4386,16 +4404,16 @@ public final class Protocol {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof Protocol.StateTransfer) {
-          return mergeFrom((Protocol.StateTransfer)other);
+        if (other instanceof Protocol.StateUpdate) {
+          return mergeFrom((Protocol.StateUpdate)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(Protocol.StateTransfer other) {
-        if (other == Protocol.StateTransfer.getDefaultInstance()) return this;
+      public Builder mergeFrom(Protocol.StateUpdate other) {
+        if (other == Protocol.StateUpdate.getDefaultInstance()) return this;
         if (!other.getStateTransferId().isEmpty()) {
           stateTransferId_ = other.stateTransferId_;
           onChanged();
@@ -4452,11 +4470,11 @@ public final class Protocol {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        Protocol.StateTransfer parsedMessage = null;
+        Protocol.StateUpdate parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (Protocol.StateTransfer) e.getUnfinishedMessage();
+          parsedMessage = (Protocol.StateUpdate) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -4545,14 +4563,14 @@ public final class Protocol {
 
       private int type_ = 0;
       /**
-       * <code>.StateTransferType type = 2;</code>
+       * <code>.StateUpdateType type = 2;</code>
        * @return The enum numeric value on the wire for type.
        */
       @java.lang.Override public int getTypeValue() {
         return type_;
       }
       /**
-       * <code>.StateTransferType type = 2;</code>
+       * <code>.StateUpdateType type = 2;</code>
        * @param value The enum numeric value on the wire for type to set.
        * @return This builder for chaining.
        */
@@ -4563,21 +4581,21 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.StateTransferType type = 2;</code>
+       * <code>.StateUpdateType type = 2;</code>
        * @return The type.
        */
       @java.lang.Override
-      public Protocol.StateTransferType getType() {
+      public Protocol.StateUpdateType getType() {
         @SuppressWarnings("deprecation")
-        Protocol.StateTransferType result = Protocol.StateTransferType.valueOf(type_);
-        return result == null ? Protocol.StateTransferType.UNRECOGNIZED : result;
+        Protocol.StateUpdateType result = Protocol.StateUpdateType.valueOf(type_);
+        return result == null ? Protocol.StateUpdateType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.StateTransferType type = 2;</code>
+       * <code>.StateUpdateType type = 2;</code>
        * @param value The type to set.
        * @return This builder for chaining.
        */
-      public Builder setType(Protocol.StateTransferType value) {
+      public Builder setType(Protocol.StateUpdateType value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -4587,7 +4605,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.StateTransferType type = 2;</code>
+       * <code>.StateUpdateType type = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearType() {
@@ -4843,7 +4861,7 @@ public final class Protocol {
        * Represents a single account id, useful for movement operation
        * </pre>
        *
-       * <code>int32 account_id = 4;</code>
+       * <code>optional int32 account_id = 4;</code>
        * @return Whether the accountId field is set.
        */
       @java.lang.Override
@@ -4855,7 +4873,7 @@ public final class Protocol {
        * Represents a single account id, useful for movement operation
        * </pre>
        *
-       * <code>int32 account_id = 4;</code>
+       * <code>optional int32 account_id = 4;</code>
        * @return The accountId.
        */
       @java.lang.Override
@@ -4867,7 +4885,7 @@ public final class Protocol {
        * Represents a single account id, useful for movement operation
        * </pre>
        *
-       * <code>int32 account_id = 4;</code>
+       * <code>optional int32 account_id = 4;</code>
        * @param value The accountId to set.
        * @return This builder for chaining.
        */
@@ -4882,7 +4900,7 @@ public final class Protocol {
        * Represents a single account id, useful for movement operation
        * </pre>
        *
-       * <code>int32 account_id = 4;</code>
+       * <code>optional int32 account_id = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearAccountId() {
@@ -4900,7 +4918,7 @@ public final class Protocol {
        * Represents the account id's of the transfer between two accounts
        * </pre>
        *
-       * <code>.MoneyTransfer transfer = 5;</code>
+       * <code>optional .MoneyTransfer transfer = 5;</code>
        * @return Whether the transfer field is set.
        */
       public boolean hasTransfer() {
@@ -4911,7 +4929,7 @@ public final class Protocol {
        * Represents the account id's of the transfer between two accounts
        * </pre>
        *
-       * <code>.MoneyTransfer transfer = 5;</code>
+       * <code>optional .MoneyTransfer transfer = 5;</code>
        * @return The transfer.
        */
       public Protocol.MoneyTransfer getTransfer() {
@@ -4926,7 +4944,7 @@ public final class Protocol {
        * Represents the account id's of the transfer between two accounts
        * </pre>
        *
-       * <code>.MoneyTransfer transfer = 5;</code>
+       * <code>optional .MoneyTransfer transfer = 5;</code>
        */
       public Builder setTransfer(Protocol.MoneyTransfer value) {
         if (transferBuilder_ == null) {
@@ -4946,7 +4964,7 @@ public final class Protocol {
        * Represents the account id's of the transfer between two accounts
        * </pre>
        *
-       * <code>.MoneyTransfer transfer = 5;</code>
+       * <code>optional .MoneyTransfer transfer = 5;</code>
        */
       public Builder setTransfer(
           Protocol.MoneyTransfer.Builder builderForValue) {
@@ -4964,7 +4982,7 @@ public final class Protocol {
        * Represents the account id's of the transfer between two accounts
        * </pre>
        *
-       * <code>.MoneyTransfer transfer = 5;</code>
+       * <code>optional .MoneyTransfer transfer = 5;</code>
        */
       public Builder mergeTransfer(Protocol.MoneyTransfer value) {
         if (transferBuilder_ == null) {
@@ -4988,7 +5006,7 @@ public final class Protocol {
        * Represents the account id's of the transfer between two accounts
        * </pre>
        *
-       * <code>.MoneyTransfer transfer = 5;</code>
+       * <code>optional .MoneyTransfer transfer = 5;</code>
        */
       public Builder clearTransfer() {
         if (transferBuilder_ == null) {
@@ -5005,7 +5023,7 @@ public final class Protocol {
        * Represents the account id's of the transfer between two accounts
        * </pre>
        *
-       * <code>.MoneyTransfer transfer = 5;</code>
+       * <code>optional .MoneyTransfer transfer = 5;</code>
        */
       public Protocol.MoneyTransfer.Builder getTransferBuilder() {
         bitField0_ |= 0x00000004;
@@ -5017,7 +5035,7 @@ public final class Protocol {
        * Represents the account id's of the transfer between two accounts
        * </pre>
        *
-       * <code>.MoneyTransfer transfer = 5;</code>
+       * <code>optional .MoneyTransfer transfer = 5;</code>
        */
       public Protocol.MoneyTransferOrBuilder getTransferOrBuilder() {
         if (transferBuilder_ != null) {
@@ -5032,7 +5050,7 @@ public final class Protocol {
        * Represents the account id's of the transfer between two accounts
        * </pre>
        *
-       * <code>.MoneyTransfer transfer = 5;</code>
+       * <code>optional .MoneyTransfer transfer = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           Protocol.MoneyTransfer, Protocol.MoneyTransfer.Builder, Protocol.MoneyTransferOrBuilder> 
@@ -5216,41 +5234,41 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:StateTransfer)
+      // @@protoc_insertion_point(builder_scope:StateUpdate)
     }
 
-    // @@protoc_insertion_point(class_scope:StateTransfer)
-    private static final Protocol.StateTransfer DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:StateUpdate)
+    private static final Protocol.StateUpdate DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new Protocol.StateTransfer();
+      DEFAULT_INSTANCE = new Protocol.StateUpdate();
     }
 
-    public static Protocol.StateTransfer getDefaultInstance() {
+    public static Protocol.StateUpdate getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<StateTransfer>
-        PARSER = new com.google.protobuf.AbstractParser<StateTransfer>() {
+    private static final com.google.protobuf.Parser<StateUpdate>
+        PARSER = new com.google.protobuf.AbstractParser<StateUpdate>() {
       @java.lang.Override
-      public StateTransfer parsePartialFrom(
+      public StateUpdate parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new StateTransfer(input, extensionRegistry);
+        return new StateUpdate(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<StateTransfer> parser() {
+    public static com.google.protobuf.Parser<StateUpdate> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<StateTransfer> getParserForType() {
+    public com.google.protobuf.Parser<StateUpdate> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public Protocol.StateTransfer getDefaultInstanceForType() {
+    public Protocol.StateUpdate getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5261,16 +5279,16 @@ public final class Protocol {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string stateTransferId = 1;</code>
-     * @return The stateTransferId.
+     * <code>string serverId = 1;</code>
+     * @return The serverId.
      */
-    java.lang.String getStateTransferId();
+    java.lang.String getServerId();
     /**
-     * <code>string stateTransferId = 1;</code>
-     * @return The bytes for stateTransferId.
+     * <code>string serverId = 1;</code>
+     * @return The bytes for serverId.
      */
     com.google.protobuf.ByteString
-        getStateTransferIdBytes();
+        getServerIdBytes();
 
     /**
      * <code>.StateTransferRequestType type = 2;</code>
@@ -5285,24 +5303,64 @@ public final class Protocol {
 
     /**
      * <pre>
-     * How to request for state? Give a number and server send us last state
+     * Account to last observed state
      * </pre>
      *
-     * <code>int32 last_observed_state = 3;</code>
-     * @return Whether the lastObservedState field is set.
+     * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
      */
-    boolean hasLastObservedState();
+    int getLastObservedStatesCount();
     /**
      * <pre>
-     * How to request for state? Give a number and server send us last state
+     * Account to last observed state
      * </pre>
      *
-     * <code>int32 last_observed_state = 3;</code>
-     * @return The lastObservedState.
+     * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
      */
-    int getLastObservedState();
+    boolean containsLastObservedStates(
+        int key);
+    /**
+     * Use {@link #getLastObservedStatesMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.Integer, java.lang.Integer>
+    getLastObservedStates();
+    /**
+     * <pre>
+     * Account to last observed state
+     * </pre>
+     *
+     * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+     */
+    java.util.Map<java.lang.Integer, java.lang.Integer>
+    getLastObservedStatesMap();
+    /**
+     * <pre>
+     * Account to last observed state
+     * </pre>
+     *
+     * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+     */
+
+    int getLastObservedStatesOrDefault(
+        int key,
+        int defaultValue);
+    /**
+     * <pre>
+     * Account to last observed state
+     * </pre>
+     *
+     * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+     */
+
+    int getLastObservedStatesOrThrow(
+        int key);
   }
   /**
+   * <pre>
+   * Message that represents a state transfer request, has the server id of who requested and a map
+   * that for each account indicates which was the last observed state
+   * </pre>
+   *
    * Protobuf type {@code StateTransferRequest}
    */
   public static final class StateTransferRequest extends
@@ -5315,7 +5373,7 @@ public final class Protocol {
       super(builder);
     }
     private StateTransferRequest() {
-      stateTransferId_ = "";
+      serverId_ = "";
       type_ = 0;
     }
 
@@ -5353,7 +5411,7 @@ public final class Protocol {
             case 10: {
               java.lang.String s = input.readStringRequireUtf8();
 
-              stateTransferId_ = s;
+              serverId_ = s;
               break;
             }
             case 16: {
@@ -5362,9 +5420,17 @@ public final class Protocol {
               type_ = rawValue;
               break;
             }
-            case 24: {
-              bitField0_ |= 0x00000001;
-              lastObservedState_ = input.readInt32();
+            case 26: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                lastObservedStates_ = com.google.protobuf.MapField.newMapField(
+                    LastObservedStatesDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<java.lang.Integer, java.lang.Integer>
+              lastObservedStates__ = input.readMessage(
+                  LastObservedStatesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              lastObservedStates_.getMutableMap().put(
+                  lastObservedStates__.getKey(), lastObservedStates__.getValue());
               break;
             }
             default: {
@@ -5391,6 +5457,18 @@ public final class Protocol {
       return Protocol.internal_static_StateTransferRequest_descriptor;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 3:
+          return internalGetLastObservedStates();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
@@ -5399,39 +5477,38 @@ public final class Protocol {
               Protocol.StateTransferRequest.class, Protocol.StateTransferRequest.Builder.class);
     }
 
-    private int bitField0_;
-    public static final int STATETRANSFERID_FIELD_NUMBER = 1;
-    private volatile java.lang.Object stateTransferId_;
+    public static final int SERVERID_FIELD_NUMBER = 1;
+    private volatile java.lang.Object serverId_;
     /**
-     * <code>string stateTransferId = 1;</code>
-     * @return The stateTransferId.
+     * <code>string serverId = 1;</code>
+     * @return The serverId.
      */
     @java.lang.Override
-    public java.lang.String getStateTransferId() {
-      java.lang.Object ref = stateTransferId_;
+    public java.lang.String getServerId() {
+      java.lang.Object ref = serverId_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        stateTransferId_ = s;
+        serverId_ = s;
         return s;
       }
     }
     /**
-     * <code>string stateTransferId = 1;</code>
-     * @return The bytes for stateTransferId.
+     * <code>string serverId = 1;</code>
+     * @return The bytes for serverId.
      */
     @java.lang.Override
     public com.google.protobuf.ByteString
-        getStateTransferIdBytes() {
-      java.lang.Object ref = stateTransferId_;
+        getServerIdBytes() {
+      java.lang.Object ref = serverId_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        stateTransferId_ = b;
+        serverId_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -5457,31 +5534,101 @@ public final class Protocol {
       return result == null ? Protocol.StateTransferRequestType.UNRECOGNIZED : result;
     }
 
-    public static final int LAST_OBSERVED_STATE_FIELD_NUMBER = 3;
-    private int lastObservedState_;
-    /**
-     * <pre>
-     * How to request for state? Give a number and server send us last state
-     * </pre>
-     *
-     * <code>int32 last_observed_state = 3;</code>
-     * @return Whether the lastObservedState field is set.
-     */
-    @java.lang.Override
-    public boolean hasLastObservedState() {
-      return ((bitField0_ & 0x00000001) != 0);
+    public static final int LAST_OBSERVED_STATES_FIELD_NUMBER = 3;
+    private static final class LastObservedStatesDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.Integer, java.lang.Integer> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.Integer, java.lang.Integer>newDefaultInstance(
+                  Protocol.internal_static_StateTransferRequest_LastObservedStatesEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.INT32,
+                  0,
+                  com.google.protobuf.WireFormat.FieldType.INT32,
+                  0);
+    }
+    private com.google.protobuf.MapField<
+        java.lang.Integer, java.lang.Integer> lastObservedStates_;
+    private com.google.protobuf.MapField<java.lang.Integer, java.lang.Integer>
+    internalGetLastObservedStates() {
+      if (lastObservedStates_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            LastObservedStatesDefaultEntryHolder.defaultEntry);
+      }
+      return lastObservedStates_;
+    }
+
+    public int getLastObservedStatesCount() {
+      return internalGetLastObservedStates().getMap().size();
     }
     /**
      * <pre>
-     * How to request for state? Give a number and server send us last state
+     * Account to last observed state
      * </pre>
      *
-     * <code>int32 last_observed_state = 3;</code>
-     * @return The lastObservedState.
+     * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+     */
+
+    @java.lang.Override
+    public boolean containsLastObservedStates(
+        int key) {
+      
+      return internalGetLastObservedStates().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getLastObservedStatesMap()} instead.
      */
     @java.lang.Override
-    public int getLastObservedState() {
-      return lastObservedState_;
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.Integer, java.lang.Integer> getLastObservedStates() {
+      return getLastObservedStatesMap();
+    }
+    /**
+     * <pre>
+     * Account to last observed state
+     * </pre>
+     *
+     * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+     */
+    @java.lang.Override
+
+    public java.util.Map<java.lang.Integer, java.lang.Integer> getLastObservedStatesMap() {
+      return internalGetLastObservedStates().getMap();
+    }
+    /**
+     * <pre>
+     * Account to last observed state
+     * </pre>
+     *
+     * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+     */
+    @java.lang.Override
+
+    public int getLastObservedStatesOrDefault(
+        int key,
+        int defaultValue) {
+      
+      java.util.Map<java.lang.Integer, java.lang.Integer> map =
+          internalGetLastObservedStates().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     * Account to last observed state
+     * </pre>
+     *
+     * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+     */
+    @java.lang.Override
+
+    public int getLastObservedStatesOrThrow(
+        int key) {
+      
+      java.util.Map<java.lang.Integer, java.lang.Integer> map =
+          internalGetLastObservedStates().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -5498,15 +5645,18 @@ public final class Protocol {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getStateTransferIdBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, stateTransferId_);
+      if (!getServerIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, serverId_);
       }
       if (type_ != Protocol.StateTransferRequestType.FULL_STATE.getNumber()) {
         output.writeEnum(2, type_);
       }
-      if (((bitField0_ & 0x00000001) != 0)) {
-        output.writeInt32(3, lastObservedState_);
-      }
+      com.google.protobuf.GeneratedMessageV3
+        .serializeIntegerMapTo(
+          output,
+          internalGetLastObservedStates(),
+          LastObservedStatesDefaultEntryHolder.defaultEntry,
+          3);
       unknownFields.writeTo(output);
     }
 
@@ -5516,16 +5666,22 @@ public final class Protocol {
       if (size != -1) return size;
 
       size = 0;
-      if (!getStateTransferIdBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, stateTransferId_);
+      if (!getServerIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, serverId_);
       }
       if (type_ != Protocol.StateTransferRequestType.FULL_STATE.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, type_);
       }
-      if (((bitField0_ & 0x00000001) != 0)) {
+      for (java.util.Map.Entry<java.lang.Integer, java.lang.Integer> entry
+           : internalGetLastObservedStates().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.Integer, java.lang.Integer>
+        lastObservedStates__ = LastObservedStatesDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(3, lastObservedState_);
+            .computeMessageSize(3, lastObservedStates__);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -5542,14 +5698,11 @@ public final class Protocol {
       }
       Protocol.StateTransferRequest other = (Protocol.StateTransferRequest) obj;
 
-      if (!getStateTransferId()
-          .equals(other.getStateTransferId())) return false;
+      if (!getServerId()
+          .equals(other.getServerId())) return false;
       if (type_ != other.type_) return false;
-      if (hasLastObservedState() != other.hasLastObservedState()) return false;
-      if (hasLastObservedState()) {
-        if (getLastObservedState()
-            != other.getLastObservedState()) return false;
-      }
+      if (!internalGetLastObservedStates().equals(
+          other.internalGetLastObservedStates())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -5561,13 +5714,13 @@ public final class Protocol {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + STATETRANSFERID_FIELD_NUMBER;
-      hash = (53 * hash) + getStateTransferId().hashCode();
+      hash = (37 * hash) + SERVERID_FIELD_NUMBER;
+      hash = (53 * hash) + getServerId().hashCode();
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
       hash = (53 * hash) + type_;
-      if (hasLastObservedState()) {
-        hash = (37 * hash) + LAST_OBSERVED_STATE_FIELD_NUMBER;
-        hash = (53 * hash) + getLastObservedState();
+      if (!internalGetLastObservedStates().getMap().isEmpty()) {
+        hash = (37 * hash) + LAST_OBSERVED_STATES_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetLastObservedStates().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -5665,6 +5818,11 @@ public final class Protocol {
       return builder;
     }
     /**
+     * <pre>
+     * Message that represents a state transfer request, has the server id of who requested and a map
+     * that for each account indicates which was the last observed state
+     * </pre>
+     *
      * Protobuf type {@code StateTransferRequest}
      */
     public static final class Builder extends
@@ -5676,6 +5834,28 @@ public final class Protocol {
         return Protocol.internal_static_StateTransferRequest_descriptor;
       }
 
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 3:
+            return internalGetLastObservedStates();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 3:
+            return internalGetMutableLastObservedStates();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
@@ -5702,12 +5882,11 @@ public final class Protocol {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        stateTransferId_ = "";
+        serverId_ = "";
 
         type_ = 0;
 
-        lastObservedState_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000001);
+        internalGetMutableLastObservedStates().clear();
         return this;
       }
 
@@ -5735,14 +5914,10 @@ public final class Protocol {
       public Protocol.StateTransferRequest buildPartial() {
         Protocol.StateTransferRequest result = new Protocol.StateTransferRequest(this);
         int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        result.stateTransferId_ = stateTransferId_;
+        result.serverId_ = serverId_;
         result.type_ = type_;
-        if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.lastObservedState_ = lastObservedState_;
-          to_bitField0_ |= 0x00000001;
-        }
-        result.bitField0_ = to_bitField0_;
+        result.lastObservedStates_ = internalGetLastObservedStates();
+        result.lastObservedStates_.makeImmutable();
         onBuilt();
         return result;
       }
@@ -5791,16 +5966,15 @@ public final class Protocol {
 
       public Builder mergeFrom(Protocol.StateTransferRequest other) {
         if (other == Protocol.StateTransferRequest.getDefaultInstance()) return this;
-        if (!other.getStateTransferId().isEmpty()) {
-          stateTransferId_ = other.stateTransferId_;
+        if (!other.getServerId().isEmpty()) {
+          serverId_ = other.serverId_;
           onChanged();
         }
         if (other.type_ != 0) {
           setTypeValue(other.getTypeValue());
         }
-        if (other.hasLastObservedState()) {
-          setLastObservedState(other.getLastObservedState());
-        }
+        internalGetMutableLastObservedStates().mergeFrom(
+            other.internalGetLastObservedStates());
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -5831,78 +6005,78 @@ public final class Protocol {
       }
       private int bitField0_;
 
-      private java.lang.Object stateTransferId_ = "";
+      private java.lang.Object serverId_ = "";
       /**
-       * <code>string stateTransferId = 1;</code>
-       * @return The stateTransferId.
+       * <code>string serverId = 1;</code>
+       * @return The serverId.
        */
-      public java.lang.String getStateTransferId() {
-        java.lang.Object ref = stateTransferId_;
+      public java.lang.String getServerId() {
+        java.lang.Object ref = serverId_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          stateTransferId_ = s;
+          serverId_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string stateTransferId = 1;</code>
-       * @return The bytes for stateTransferId.
+       * <code>string serverId = 1;</code>
+       * @return The bytes for serverId.
        */
       public com.google.protobuf.ByteString
-          getStateTransferIdBytes() {
-        java.lang.Object ref = stateTransferId_;
+          getServerIdBytes() {
+        java.lang.Object ref = serverId_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          stateTransferId_ = b;
+          serverId_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string stateTransferId = 1;</code>
-       * @param value The stateTransferId to set.
+       * <code>string serverId = 1;</code>
+       * @param value The serverId to set.
        * @return This builder for chaining.
        */
-      public Builder setStateTransferId(
+      public Builder setServerId(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        stateTransferId_ = value;
+        serverId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string stateTransferId = 1;</code>
+       * <code>string serverId = 1;</code>
        * @return This builder for chaining.
        */
-      public Builder clearStateTransferId() {
+      public Builder clearServerId() {
         
-        stateTransferId_ = getDefaultInstance().getStateTransferId();
+        serverId_ = getDefaultInstance().getServerId();
         onChanged();
         return this;
       }
       /**
-       * <code>string stateTransferId = 1;</code>
-       * @param value The bytes for stateTransferId to set.
+       * <code>string serverId = 1;</code>
+       * @param value The bytes for serverId to set.
        * @return This builder for chaining.
        */
-      public Builder setStateTransferIdBytes(
+      public Builder setServerIdBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
         
-        stateTransferId_ = value;
+        serverId_ = value;
         onChanged();
         return this;
       }
@@ -5961,58 +6135,159 @@ public final class Protocol {
         return this;
       }
 
-      private int lastObservedState_ ;
-      /**
-       * <pre>
-       * How to request for state? Give a number and server send us last state
-       * </pre>
-       *
-       * <code>int32 last_observed_state = 3;</code>
-       * @return Whether the lastObservedState field is set.
-       */
-      @java.lang.Override
-      public boolean hasLastObservedState() {
-        return ((bitField0_ & 0x00000001) != 0);
+      private com.google.protobuf.MapField<
+          java.lang.Integer, java.lang.Integer> lastObservedStates_;
+      private com.google.protobuf.MapField<java.lang.Integer, java.lang.Integer>
+      internalGetLastObservedStates() {
+        if (lastObservedStates_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              LastObservedStatesDefaultEntryHolder.defaultEntry);
+        }
+        return lastObservedStates_;
+      }
+      private com.google.protobuf.MapField<java.lang.Integer, java.lang.Integer>
+      internalGetMutableLastObservedStates() {
+        onChanged();;
+        if (lastObservedStates_ == null) {
+          lastObservedStates_ = com.google.protobuf.MapField.newMapField(
+              LastObservedStatesDefaultEntryHolder.defaultEntry);
+        }
+        if (!lastObservedStates_.isMutable()) {
+          lastObservedStates_ = lastObservedStates_.copy();
+        }
+        return lastObservedStates_;
+      }
+
+      public int getLastObservedStatesCount() {
+        return internalGetLastObservedStates().getMap().size();
       }
       /**
        * <pre>
-       * How to request for state? Give a number and server send us last state
+       * Account to last observed state
        * </pre>
        *
-       * <code>int32 last_observed_state = 3;</code>
-       * @return The lastObservedState.
+       * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+       */
+
+      @java.lang.Override
+      public boolean containsLastObservedStates(
+          int key) {
+        
+        return internalGetLastObservedStates().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getLastObservedStatesMap()} instead.
        */
       @java.lang.Override
-      public int getLastObservedState() {
-        return lastObservedState_;
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.Integer, java.lang.Integer> getLastObservedStates() {
+        return getLastObservedStatesMap();
       }
       /**
        * <pre>
-       * How to request for state? Give a number and server send us last state
+       * Account to last observed state
        * </pre>
        *
-       * <code>int32 last_observed_state = 3;</code>
-       * @param value The lastObservedState to set.
-       * @return This builder for chaining.
+       * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
        */
-      public Builder setLastObservedState(int value) {
-        bitField0_ |= 0x00000001;
-        lastObservedState_ = value;
-        onChanged();
+      @java.lang.Override
+
+      public java.util.Map<java.lang.Integer, java.lang.Integer> getLastObservedStatesMap() {
+        return internalGetLastObservedStates().getMap();
+      }
+      /**
+       * <pre>
+       * Account to last observed state
+       * </pre>
+       *
+       * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+       */
+      @java.lang.Override
+
+      public int getLastObservedStatesOrDefault(
+          int key,
+          int defaultValue) {
+        
+        java.util.Map<java.lang.Integer, java.lang.Integer> map =
+            internalGetLastObservedStates().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <pre>
+       * Account to last observed state
+       * </pre>
+       *
+       * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+       */
+      @java.lang.Override
+
+      public int getLastObservedStatesOrThrow(
+          int key) {
+        
+        java.util.Map<java.lang.Integer, java.lang.Integer> map =
+            internalGetLastObservedStates().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearLastObservedStates() {
+        internalGetMutableLastObservedStates().getMutableMap()
+            .clear();
         return this;
       }
       /**
        * <pre>
-       * How to request for state? Give a number and server send us last state
+       * Account to last observed state
        * </pre>
        *
-       * <code>int32 last_observed_state = 3;</code>
-       * @return This builder for chaining.
+       * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
        */
-      public Builder clearLastObservedState() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        lastObservedState_ = 0;
-        onChanged();
+
+      public Builder removeLastObservedStates(
+          int key) {
+        
+        internalGetMutableLastObservedStates().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.Integer, java.lang.Integer>
+      getMutableLastObservedStates() {
+        return internalGetMutableLastObservedStates().getMutableMap();
+      }
+      /**
+       * <pre>
+       * Account to last observed state
+       * </pre>
+       *
+       * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+       */
+      public Builder putLastObservedStates(
+          int key,
+          int value) {
+        
+        
+        internalGetMutableLastObservedStates().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <pre>
+       * Account to last observed state
+       * </pre>
+       *
+       * <code>map&lt;int32, int32&gt; last_observed_states = 3;</code>
+       */
+
+      public Builder putAllLastObservedStates(
+          java.util.Map<java.lang.Integer, java.lang.Integer> values) {
+        internalGetMutableLastObservedStates().getMutableMap()
+            .putAll(values);
         return this;
       }
       @java.lang.Override
@@ -6063,6 +6338,902 @@ public final class Protocol {
 
     @java.lang.Override
     public Protocol.StateTransferRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface StateTransferReplyOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:StateTransferReply)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string serverId = 1;</code>
+     * @return The serverId.
+     */
+    java.lang.String getServerId();
+    /**
+     * <code>string serverId = 1;</code>
+     * @return The bytes for serverId.
+     */
+    com.google.protobuf.ByteString
+        getServerIdBytes();
+
+    /**
+     * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+     */
+    int getAccountsStatesCount();
+    /**
+     * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+     */
+    boolean containsAccountsStates(
+        int key);
+    /**
+     * Use {@link #getAccountsStatesMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.Integer, Protocol.AccountStatement>
+    getAccountsStates();
+    /**
+     * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+     */
+    java.util.Map<java.lang.Integer, Protocol.AccountStatement>
+    getAccountsStatesMap();
+    /**
+     * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+     */
+
+    Protocol.AccountStatement getAccountsStatesOrDefault(
+        int key,
+        Protocol.AccountStatement defaultValue);
+    /**
+     * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+     */
+
+    Protocol.AccountStatement getAccountsStatesOrThrow(
+        int key);
+  }
+  /**
+   * <pre>
+   * Message that represents a state transfer reply from the leader to the person who requested it
+   * </pre>
+   *
+   * Protobuf type {@code StateTransferReply}
+   */
+  public static final class StateTransferReply extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:StateTransferReply)
+      StateTransferReplyOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use StateTransferReply.newBuilder() to construct.
+    private StateTransferReply(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private StateTransferReply() {
+      serverId_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new StateTransferReply();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private StateTransferReply(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              serverId_ = s;
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                accountsStates_ = com.google.protobuf.MapField.newMapField(
+                    AccountsStatesDefaultEntryHolder.defaultEntry);
+                mutable_bitField0_ |= 0x00000001;
+              }
+              com.google.protobuf.MapEntry<java.lang.Integer, Protocol.AccountStatement>
+              accountsStates__ = input.readMessage(
+                  AccountsStatesDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              accountsStates_.getMutableMap().put(
+                  accountsStates__.getKey(), accountsStates__.getValue());
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return Protocol.internal_static_StateTransferReply_descriptor;
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 2:
+          return internalGetAccountsStates();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return Protocol.internal_static_StateTransferReply_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              Protocol.StateTransferReply.class, Protocol.StateTransferReply.Builder.class);
+    }
+
+    public static final int SERVERID_FIELD_NUMBER = 1;
+    private volatile java.lang.Object serverId_;
+    /**
+     * <code>string serverId = 1;</code>
+     * @return The serverId.
+     */
+    @java.lang.Override
+    public java.lang.String getServerId() {
+      java.lang.Object ref = serverId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        serverId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string serverId = 1;</code>
+     * @return The bytes for serverId.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getServerIdBytes() {
+      java.lang.Object ref = serverId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        serverId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ACCOUNTS_STATES_FIELD_NUMBER = 2;
+    private static final class AccountsStatesDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.Integer, Protocol.AccountStatement> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.Integer, Protocol.AccountStatement>newDefaultInstance(
+                  Protocol.internal_static_StateTransferReply_AccountsStatesEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.INT32,
+                  0,
+                  com.google.protobuf.WireFormat.FieldType.MESSAGE,
+                  Protocol.AccountStatement.getDefaultInstance());
+    }
+    private com.google.protobuf.MapField<
+        java.lang.Integer, Protocol.AccountStatement> accountsStates_;
+    private com.google.protobuf.MapField<java.lang.Integer, Protocol.AccountStatement>
+    internalGetAccountsStates() {
+      if (accountsStates_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            AccountsStatesDefaultEntryHolder.defaultEntry);
+      }
+      return accountsStates_;
+    }
+
+    public int getAccountsStatesCount() {
+      return internalGetAccountsStates().getMap().size();
+    }
+    /**
+     * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+     */
+
+    @java.lang.Override
+    public boolean containsAccountsStates(
+        int key) {
+      
+      return internalGetAccountsStates().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getAccountsStatesMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.Integer, Protocol.AccountStatement> getAccountsStates() {
+      return getAccountsStatesMap();
+    }
+    /**
+     * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+     */
+    @java.lang.Override
+
+    public java.util.Map<java.lang.Integer, Protocol.AccountStatement> getAccountsStatesMap() {
+      return internalGetAccountsStates().getMap();
+    }
+    /**
+     * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+     */
+    @java.lang.Override
+
+    public Protocol.AccountStatement getAccountsStatesOrDefault(
+        int key,
+        Protocol.AccountStatement defaultValue) {
+      
+      java.util.Map<java.lang.Integer, Protocol.AccountStatement> map =
+          internalGetAccountsStates().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+     */
+    @java.lang.Override
+
+    public Protocol.AccountStatement getAccountsStatesOrThrow(
+        int key) {
+      
+      java.util.Map<java.lang.Integer, Protocol.AccountStatement> map =
+          internalGetAccountsStates().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getServerIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, serverId_);
+      }
+      com.google.protobuf.GeneratedMessageV3
+        .serializeIntegerMapTo(
+          output,
+          internalGetAccountsStates(),
+          AccountsStatesDefaultEntryHolder.defaultEntry,
+          2);
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getServerIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, serverId_);
+      }
+      for (java.util.Map.Entry<java.lang.Integer, Protocol.AccountStatement> entry
+           : internalGetAccountsStates().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.Integer, Protocol.AccountStatement>
+        accountsStates__ = AccountsStatesDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(2, accountsStates__);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof Protocol.StateTransferReply)) {
+        return super.equals(obj);
+      }
+      Protocol.StateTransferReply other = (Protocol.StateTransferReply) obj;
+
+      if (!getServerId()
+          .equals(other.getServerId())) return false;
+      if (!internalGetAccountsStates().equals(
+          other.internalGetAccountsStates())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + SERVERID_FIELD_NUMBER;
+      hash = (53 * hash) + getServerId().hashCode();
+      if (!internalGetAccountsStates().getMap().isEmpty()) {
+        hash = (37 * hash) + ACCOUNTS_STATES_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetAccountsStates().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static Protocol.StateTransferReply parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static Protocol.StateTransferReply parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static Protocol.StateTransferReply parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static Protocol.StateTransferReply parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static Protocol.StateTransferReply parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static Protocol.StateTransferReply parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static Protocol.StateTransferReply parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static Protocol.StateTransferReply parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static Protocol.StateTransferReply parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static Protocol.StateTransferReply parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static Protocol.StateTransferReply parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static Protocol.StateTransferReply parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(Protocol.StateTransferReply prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Message that represents a state transfer reply from the leader to the person who requested it
+     * </pre>
+     *
+     * Protobuf type {@code StateTransferReply}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:StateTransferReply)
+        Protocol.StateTransferReplyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return Protocol.internal_static_StateTransferReply_descriptor;
+      }
+
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 2:
+            return internalGetAccountsStates();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 2:
+            return internalGetMutableAccountsStates();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return Protocol.internal_static_StateTransferReply_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                Protocol.StateTransferReply.class, Protocol.StateTransferReply.Builder.class);
+      }
+
+      // Construct using Protocol.StateTransferReply.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        serverId_ = "";
+
+        internalGetMutableAccountsStates().clear();
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return Protocol.internal_static_StateTransferReply_descriptor;
+      }
+
+      @java.lang.Override
+      public Protocol.StateTransferReply getDefaultInstanceForType() {
+        return Protocol.StateTransferReply.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public Protocol.StateTransferReply build() {
+        Protocol.StateTransferReply result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public Protocol.StateTransferReply buildPartial() {
+        Protocol.StateTransferReply result = new Protocol.StateTransferReply(this);
+        int from_bitField0_ = bitField0_;
+        result.serverId_ = serverId_;
+        result.accountsStates_ = internalGetAccountsStates();
+        result.accountsStates_.makeImmutable();
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof Protocol.StateTransferReply) {
+          return mergeFrom((Protocol.StateTransferReply)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(Protocol.StateTransferReply other) {
+        if (other == Protocol.StateTransferReply.getDefaultInstance()) return this;
+        if (!other.getServerId().isEmpty()) {
+          serverId_ = other.serverId_;
+          onChanged();
+        }
+        internalGetMutableAccountsStates().mergeFrom(
+            other.internalGetAccountsStates());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        Protocol.StateTransferReply parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (Protocol.StateTransferReply) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object serverId_ = "";
+      /**
+       * <code>string serverId = 1;</code>
+       * @return The serverId.
+       */
+      public java.lang.String getServerId() {
+        java.lang.Object ref = serverId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          serverId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string serverId = 1;</code>
+       * @return The bytes for serverId.
+       */
+      public com.google.protobuf.ByteString
+          getServerIdBytes() {
+        java.lang.Object ref = serverId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          serverId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string serverId = 1;</code>
+       * @param value The serverId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setServerId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        serverId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string serverId = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearServerId() {
+        
+        serverId_ = getDefaultInstance().getServerId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string serverId = 1;</code>
+       * @param value The bytes for serverId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setServerIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        serverId_ = value;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.MapField<
+          java.lang.Integer, Protocol.AccountStatement> accountsStates_;
+      private com.google.protobuf.MapField<java.lang.Integer, Protocol.AccountStatement>
+      internalGetAccountsStates() {
+        if (accountsStates_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              AccountsStatesDefaultEntryHolder.defaultEntry);
+        }
+        return accountsStates_;
+      }
+      private com.google.protobuf.MapField<java.lang.Integer, Protocol.AccountStatement>
+      internalGetMutableAccountsStates() {
+        onChanged();;
+        if (accountsStates_ == null) {
+          accountsStates_ = com.google.protobuf.MapField.newMapField(
+              AccountsStatesDefaultEntryHolder.defaultEntry);
+        }
+        if (!accountsStates_.isMutable()) {
+          accountsStates_ = accountsStates_.copy();
+        }
+        return accountsStates_;
+      }
+
+      public int getAccountsStatesCount() {
+        return internalGetAccountsStates().getMap().size();
+      }
+      /**
+       * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+       */
+
+      @java.lang.Override
+      public boolean containsAccountsStates(
+          int key) {
+        
+        return internalGetAccountsStates().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getAccountsStatesMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.Integer, Protocol.AccountStatement> getAccountsStates() {
+        return getAccountsStatesMap();
+      }
+      /**
+       * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+       */
+      @java.lang.Override
+
+      public java.util.Map<java.lang.Integer, Protocol.AccountStatement> getAccountsStatesMap() {
+        return internalGetAccountsStates().getMap();
+      }
+      /**
+       * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+       */
+      @java.lang.Override
+
+      public Protocol.AccountStatement getAccountsStatesOrDefault(
+          int key,
+          Protocol.AccountStatement defaultValue) {
+        
+        java.util.Map<java.lang.Integer, Protocol.AccountStatement> map =
+            internalGetAccountsStates().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+       */
+      @java.lang.Override
+
+      public Protocol.AccountStatement getAccountsStatesOrThrow(
+          int key) {
+        
+        java.util.Map<java.lang.Integer, Protocol.AccountStatement> map =
+            internalGetAccountsStates().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+
+      public Builder clearAccountsStates() {
+        internalGetMutableAccountsStates().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+       */
+
+      public Builder removeAccountsStates(
+          int key) {
+        
+        internalGetMutableAccountsStates().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.Integer, Protocol.AccountStatement>
+      getMutableAccountsStates() {
+        return internalGetMutableAccountsStates().getMutableMap();
+      }
+      /**
+       * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+       */
+      public Builder putAccountsStates(
+          int key,
+          Protocol.AccountStatement value) {
+        
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        internalGetMutableAccountsStates().getMutableMap()
+            .put(key, value);
+        return this;
+      }
+      /**
+       * <code>map&lt;int32, .AccountStatement&gt; accounts_states = 2;</code>
+       */
+
+      public Builder putAllAccountsStates(
+          java.util.Map<java.lang.Integer, Protocol.AccountStatement> values) {
+        internalGetMutableAccountsStates().getMutableMap()
+            .putAll(values);
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:StateTransferReply)
+    }
+
+    // @@protoc_insertion_point(class_scope:StateTransferReply)
+    private static final Protocol.StateTransferReply DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new Protocol.StateTransferReply();
+    }
+
+    public static Protocol.StateTransferReply getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<StateTransferReply>
+        PARSER = new com.google.protobuf.AbstractParser<StateTransferReply>() {
+      @java.lang.Override
+      public StateTransferReply parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new StateTransferReply(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<StateTransferReply> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<StateTransferReply> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public Protocol.StateTransferReply getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -6806,12 +7977,12 @@ public final class Protocol {
     Protocol.OperationType getType();
 
     /**
-     * <code>int32 account_id = 3;</code>
+     * <code>optional int32 account_id = 3;</code>
      * @return Whether the accountId field is set.
      */
     boolean hasAccountId();
     /**
-     * <code>int32 account_id = 3;</code>
+     * <code>optional int32 account_id = 3;</code>
      * @return The accountId.
      */
     int getAccountId();
@@ -6821,7 +7992,7 @@ public final class Protocol {
      * Information about the operation
      * </pre>
      *
-     * <code>.BankOperation operationInfo = 4;</code>
+     * <code>optional .BankOperation operationInfo = 4;</code>
      * @return Whether the operationInfo field is set.
      */
     boolean hasOperationInfo();
@@ -6830,7 +8001,7 @@ public final class Protocol {
      * Information about the operation
      * </pre>
      *
-     * <code>.BankOperation operationInfo = 4;</code>
+     * <code>optional .BankOperation operationInfo = 4;</code>
      * @return The operationInfo.
      */
     Protocol.BankOperation getOperationInfo();
@@ -6839,7 +8010,7 @@ public final class Protocol {
      * Information about the operation
      * </pre>
      *
-     * <code>.BankOperation operationInfo = 4;</code>
+     * <code>optional .BankOperation operationInfo = 4;</code>
      */
     Protocol.BankOperationOrBuilder getOperationInfoOrBuilder();
 
@@ -6848,7 +8019,7 @@ public final class Protocol {
      * Money transfer operation
      * </pre>
      *
-     * <code>.MoneyTransfer moneyTransfer = 5;</code>
+     * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
      * @return Whether the moneyTransfer field is set.
      */
     boolean hasMoneyTransfer();
@@ -6857,7 +8028,7 @@ public final class Protocol {
      * Money transfer operation
      * </pre>
      *
-     * <code>.MoneyTransfer moneyTransfer = 5;</code>
+     * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
      * @return The moneyTransfer.
      */
     Protocol.MoneyTransfer getMoneyTransfer();
@@ -6866,43 +8037,97 @@ public final class Protocol {
      * Money transfer operation
      * </pre>
      *
-     * <code>.MoneyTransfer moneyTransfer = 5;</code>
+     * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
      */
     Protocol.MoneyTransferOrBuilder getMoneyTransferOrBuilder();
 
     /**
      * <pre>
-     * State transfer
+     * Update State
      * </pre>
      *
-     * <code>.StateTransfer stateTransfer = 6;</code>
-     * @return Whether the stateTransfer field is set.
+     * <code>optional .StateUpdate stateUpdate = 6;</code>
+     * @return Whether the stateUpdate field is set.
      */
-    boolean hasStateTransfer();
+    boolean hasStateUpdate();
     /**
      * <pre>
-     * State transfer
+     * Update State
      * </pre>
      *
-     * <code>.StateTransfer stateTransfer = 6;</code>
-     * @return The stateTransfer.
+     * <code>optional .StateUpdate stateUpdate = 6;</code>
+     * @return The stateUpdate.
      */
-    Protocol.StateTransfer getStateTransfer();
+    Protocol.StateUpdate getStateUpdate();
     /**
      * <pre>
-     * State transfer
+     * Update State
      * </pre>
      *
-     * <code>.StateTransfer stateTransfer = 6;</code>
+     * <code>optional .StateUpdate stateUpdate = 6;</code>
      */
-    Protocol.StateTransferOrBuilder getStateTransferOrBuilder();
+    Protocol.StateUpdateOrBuilder getStateUpdateOrBuilder();
+
+    /**
+     * <pre>
+     * Request for state
+     * </pre>
+     *
+     * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+     * @return Whether the stateTransferRequest field is set.
+     */
+    boolean hasStateTransferRequest();
+    /**
+     * <pre>
+     * Request for state
+     * </pre>
+     *
+     * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+     * @return The stateTransferRequest.
+     */
+    Protocol.StateTransferRequest getStateTransferRequest();
+    /**
+     * <pre>
+     * Request for state
+     * </pre>
+     *
+     * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+     */
+    Protocol.StateTransferRequestOrBuilder getStateTransferRequestOrBuilder();
+
+    /**
+     * <pre>
+     * Reply from the leader with the requested state
+     * </pre>
+     *
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     * @return Whether the stateTransferReply field is set.
+     */
+    boolean hasStateTransferReply();
+    /**
+     * <pre>
+     * Reply from the leader with the requested state
+     * </pre>
+     *
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     * @return The stateTransferReply.
+     */
+    Protocol.StateTransferReply getStateTransferReply();
+    /**
+     * <pre>
+     * Reply from the leader with the requested state
+     * </pre>
+     *
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     */
+    Protocol.StateTransferReplyOrBuilder getStateTransferReplyOrBuilder();
 
     /**
      * <pre>
      * Merge protocol proposal
      * </pre>
      *
-     * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      * @return Whether the mergeProtocolProposal field is set.
      */
     boolean hasMergeProtocolProposal();
@@ -6911,7 +8136,7 @@ public final class Protocol {
      * Merge protocol proposal
      * </pre>
      *
-     * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      * @return The mergeProtocolProposal.
      */
     Protocol.MergeProtocolProposal getMergeProtocolProposal();
@@ -6920,7 +8145,7 @@ public final class Protocol {
      * Merge protocol proposal
      * </pre>
      *
-     * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      */
     Protocol.MergeProtocolProposalOrBuilder getMergeProtocolProposalOrBuilder();
   }
@@ -7014,21 +8239,47 @@ public final class Protocol {
               break;
             }
             case 50: {
-              Protocol.StateTransfer.Builder subBuilder = null;
+              Protocol.StateUpdate.Builder subBuilder = null;
               if (((bitField0_ & 0x00000008) != 0)) {
-                subBuilder = stateTransfer_.toBuilder();
+                subBuilder = stateUpdate_.toBuilder();
               }
-              stateTransfer_ = input.readMessage(Protocol.StateTransfer.parser(), extensionRegistry);
+              stateUpdate_ = input.readMessage(Protocol.StateUpdate.parser(), extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom(stateTransfer_);
-                stateTransfer_ = subBuilder.buildPartial();
+                subBuilder.mergeFrom(stateUpdate_);
+                stateUpdate_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000008;
               break;
             }
             case 58: {
-              Protocol.MergeProtocolProposal.Builder subBuilder = null;
+              Protocol.StateTransferRequest.Builder subBuilder = null;
               if (((bitField0_ & 0x00000010) != 0)) {
+                subBuilder = stateTransferRequest_.toBuilder();
+              }
+              stateTransferRequest_ = input.readMessage(Protocol.StateTransferRequest.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(stateTransferRequest_);
+                stateTransferRequest_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000010;
+              break;
+            }
+            case 66: {
+              Protocol.StateTransferReply.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000020) != 0)) {
+                subBuilder = stateTransferReply_.toBuilder();
+              }
+              stateTransferReply_ = input.readMessage(Protocol.StateTransferReply.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(stateTransferReply_);
+                stateTransferReply_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000020;
+              break;
+            }
+            case 74: {
+              Protocol.MergeProtocolProposal.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000040) != 0)) {
                 subBuilder = mergeProtocolProposal_.toBuilder();
               }
               mergeProtocolProposal_ = input.readMessage(Protocol.MergeProtocolProposal.parser(), extensionRegistry);
@@ -7036,7 +8287,7 @@ public final class Protocol {
                 subBuilder.mergeFrom(mergeProtocolProposal_);
                 mergeProtocolProposal_ = subBuilder.buildPartial();
               }
-              bitField0_ |= 0x00000010;
+              bitField0_ |= 0x00000040;
               break;
             }
             default: {
@@ -7105,7 +8356,7 @@ public final class Protocol {
     public static final int ACCOUNT_ID_FIELD_NUMBER = 3;
     private int accountId_;
     /**
-     * <code>int32 account_id = 3;</code>
+     * <code>optional int32 account_id = 3;</code>
      * @return Whether the accountId field is set.
      */
     @java.lang.Override
@@ -7113,7 +8364,7 @@ public final class Protocol {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>int32 account_id = 3;</code>
+     * <code>optional int32 account_id = 3;</code>
      * @return The accountId.
      */
     @java.lang.Override
@@ -7128,7 +8379,7 @@ public final class Protocol {
      * Information about the operation
      * </pre>
      *
-     * <code>.BankOperation operationInfo = 4;</code>
+     * <code>optional .BankOperation operationInfo = 4;</code>
      * @return Whether the operationInfo field is set.
      */
     @java.lang.Override
@@ -7140,7 +8391,7 @@ public final class Protocol {
      * Information about the operation
      * </pre>
      *
-     * <code>.BankOperation operationInfo = 4;</code>
+     * <code>optional .BankOperation operationInfo = 4;</code>
      * @return The operationInfo.
      */
     @java.lang.Override
@@ -7152,7 +8403,7 @@ public final class Protocol {
      * Information about the operation
      * </pre>
      *
-     * <code>.BankOperation operationInfo = 4;</code>
+     * <code>optional .BankOperation operationInfo = 4;</code>
      */
     @java.lang.Override
     public Protocol.BankOperationOrBuilder getOperationInfoOrBuilder() {
@@ -7166,7 +8417,7 @@ public final class Protocol {
      * Money transfer operation
      * </pre>
      *
-     * <code>.MoneyTransfer moneyTransfer = 5;</code>
+     * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
      * @return Whether the moneyTransfer field is set.
      */
     @java.lang.Override
@@ -7178,7 +8429,7 @@ public final class Protocol {
      * Money transfer operation
      * </pre>
      *
-     * <code>.MoneyTransfer moneyTransfer = 5;</code>
+     * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
      * @return The moneyTransfer.
      */
     @java.lang.Override
@@ -7190,71 +8441,147 @@ public final class Protocol {
      * Money transfer operation
      * </pre>
      *
-     * <code>.MoneyTransfer moneyTransfer = 5;</code>
+     * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
      */
     @java.lang.Override
     public Protocol.MoneyTransferOrBuilder getMoneyTransferOrBuilder() {
       return moneyTransfer_ == null ? Protocol.MoneyTransfer.getDefaultInstance() : moneyTransfer_;
     }
 
-    public static final int STATETRANSFER_FIELD_NUMBER = 6;
-    private Protocol.StateTransfer stateTransfer_;
+    public static final int STATEUPDATE_FIELD_NUMBER = 6;
+    private Protocol.StateUpdate stateUpdate_;
     /**
      * <pre>
-     * State transfer
+     * Update State
      * </pre>
      *
-     * <code>.StateTransfer stateTransfer = 6;</code>
-     * @return Whether the stateTransfer field is set.
+     * <code>optional .StateUpdate stateUpdate = 6;</code>
+     * @return Whether the stateUpdate field is set.
      */
     @java.lang.Override
-    public boolean hasStateTransfer() {
+    public boolean hasStateUpdate() {
       return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      * <pre>
-     * State transfer
+     * Update State
      * </pre>
      *
-     * <code>.StateTransfer stateTransfer = 6;</code>
-     * @return The stateTransfer.
+     * <code>optional .StateUpdate stateUpdate = 6;</code>
+     * @return The stateUpdate.
      */
     @java.lang.Override
-    public Protocol.StateTransfer getStateTransfer() {
-      return stateTransfer_ == null ? Protocol.StateTransfer.getDefaultInstance() : stateTransfer_;
+    public Protocol.StateUpdate getStateUpdate() {
+      return stateUpdate_ == null ? Protocol.StateUpdate.getDefaultInstance() : stateUpdate_;
     }
     /**
      * <pre>
-     * State transfer
+     * Update State
      * </pre>
      *
-     * <code>.StateTransfer stateTransfer = 6;</code>
+     * <code>optional .StateUpdate stateUpdate = 6;</code>
      */
     @java.lang.Override
-    public Protocol.StateTransferOrBuilder getStateTransferOrBuilder() {
-      return stateTransfer_ == null ? Protocol.StateTransfer.getDefaultInstance() : stateTransfer_;
+    public Protocol.StateUpdateOrBuilder getStateUpdateOrBuilder() {
+      return stateUpdate_ == null ? Protocol.StateUpdate.getDefaultInstance() : stateUpdate_;
     }
 
-    public static final int MERGEPROTOCOLPROPOSAL_FIELD_NUMBER = 7;
+    public static final int STATETRANSFERREQUEST_FIELD_NUMBER = 7;
+    private Protocol.StateTransferRequest stateTransferRequest_;
+    /**
+     * <pre>
+     * Request for state
+     * </pre>
+     *
+     * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+     * @return Whether the stateTransferRequest field is set.
+     */
+    @java.lang.Override
+    public boolean hasStateTransferRequest() {
+      return ((bitField0_ & 0x00000010) != 0);
+    }
+    /**
+     * <pre>
+     * Request for state
+     * </pre>
+     *
+     * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+     * @return The stateTransferRequest.
+     */
+    @java.lang.Override
+    public Protocol.StateTransferRequest getStateTransferRequest() {
+      return stateTransferRequest_ == null ? Protocol.StateTransferRequest.getDefaultInstance() : stateTransferRequest_;
+    }
+    /**
+     * <pre>
+     * Request for state
+     * </pre>
+     *
+     * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+     */
+    @java.lang.Override
+    public Protocol.StateTransferRequestOrBuilder getStateTransferRequestOrBuilder() {
+      return stateTransferRequest_ == null ? Protocol.StateTransferRequest.getDefaultInstance() : stateTransferRequest_;
+    }
+
+    public static final int STATE_TRANSFER_REPLY_FIELD_NUMBER = 8;
+    private Protocol.StateTransferReply stateTransferReply_;
+    /**
+     * <pre>
+     * Reply from the leader with the requested state
+     * </pre>
+     *
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     * @return Whether the stateTransferReply field is set.
+     */
+    @java.lang.Override
+    public boolean hasStateTransferReply() {
+      return ((bitField0_ & 0x00000020) != 0);
+    }
+    /**
+     * <pre>
+     * Reply from the leader with the requested state
+     * </pre>
+     *
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     * @return The stateTransferReply.
+     */
+    @java.lang.Override
+    public Protocol.StateTransferReply getStateTransferReply() {
+      return stateTransferReply_ == null ? Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
+    }
+    /**
+     * <pre>
+     * Reply from the leader with the requested state
+     * </pre>
+     *
+     * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+     */
+    @java.lang.Override
+    public Protocol.StateTransferReplyOrBuilder getStateTransferReplyOrBuilder() {
+      return stateTransferReply_ == null ? Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
+    }
+
+    public static final int MERGEPROTOCOLPROPOSAL_FIELD_NUMBER = 9;
     private Protocol.MergeProtocolProposal mergeProtocolProposal_;
     /**
      * <pre>
      * Merge protocol proposal
      * </pre>
      *
-     * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      * @return Whether the mergeProtocolProposal field is set.
      */
     @java.lang.Override
     public boolean hasMergeProtocolProposal() {
-      return ((bitField0_ & 0x00000010) != 0);
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      * <pre>
      * Merge protocol proposal
      * </pre>
      *
-     * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      * @return The mergeProtocolProposal.
      */
     @java.lang.Override
@@ -7266,7 +8593,7 @@ public final class Protocol {
      * Merge protocol proposal
      * </pre>
      *
-     * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+     * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
      */
     @java.lang.Override
     public Protocol.MergeProtocolProposalOrBuilder getMergeProtocolProposalOrBuilder() {
@@ -7303,10 +8630,16 @@ public final class Protocol {
         output.writeMessage(5, getMoneyTransfer());
       }
       if (((bitField0_ & 0x00000008) != 0)) {
-        output.writeMessage(6, getStateTransfer());
+        output.writeMessage(6, getStateUpdate());
       }
       if (((bitField0_ & 0x00000010) != 0)) {
-        output.writeMessage(7, getMergeProtocolProposal());
+        output.writeMessage(7, getStateTransferRequest());
+      }
+      if (((bitField0_ & 0x00000020) != 0)) {
+        output.writeMessage(8, getStateTransferReply());
+      }
+      if (((bitField0_ & 0x00000040) != 0)) {
+        output.writeMessage(9, getMergeProtocolProposal());
       }
       unknownFields.writeTo(output);
     }
@@ -7339,11 +8672,19 @@ public final class Protocol {
       }
       if (((bitField0_ & 0x00000008) != 0)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(6, getStateTransfer());
+          .computeMessageSize(6, getStateUpdate());
       }
       if (((bitField0_ & 0x00000010) != 0)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, getMergeProtocolProposal());
+          .computeMessageSize(7, getStateTransferRequest());
+      }
+      if (((bitField0_ & 0x00000020) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(8, getStateTransferReply());
+      }
+      if (((bitField0_ & 0x00000040) != 0)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(9, getMergeProtocolProposal());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -7378,10 +8719,20 @@ public final class Protocol {
         if (!getMoneyTransfer()
             .equals(other.getMoneyTransfer())) return false;
       }
-      if (hasStateTransfer() != other.hasStateTransfer()) return false;
-      if (hasStateTransfer()) {
-        if (!getStateTransfer()
-            .equals(other.getStateTransfer())) return false;
+      if (hasStateUpdate() != other.hasStateUpdate()) return false;
+      if (hasStateUpdate()) {
+        if (!getStateUpdate()
+            .equals(other.getStateUpdate())) return false;
+      }
+      if (hasStateTransferRequest() != other.hasStateTransferRequest()) return false;
+      if (hasStateTransferRequest()) {
+        if (!getStateTransferRequest()
+            .equals(other.getStateTransferRequest())) return false;
+      }
+      if (hasStateTransferReply() != other.hasStateTransferReply()) return false;
+      if (hasStateTransferReply()) {
+        if (!getStateTransferReply()
+            .equals(other.getStateTransferReply())) return false;
       }
       if (hasMergeProtocolProposal() != other.hasMergeProtocolProposal()) return false;
       if (hasMergeProtocolProposal()) {
@@ -7415,9 +8766,17 @@ public final class Protocol {
         hash = (37 * hash) + MONEYTRANSFER_FIELD_NUMBER;
         hash = (53 * hash) + getMoneyTransfer().hashCode();
       }
-      if (hasStateTransfer()) {
-        hash = (37 * hash) + STATETRANSFER_FIELD_NUMBER;
-        hash = (53 * hash) + getStateTransfer().hashCode();
+      if (hasStateUpdate()) {
+        hash = (37 * hash) + STATEUPDATE_FIELD_NUMBER;
+        hash = (53 * hash) + getStateUpdate().hashCode();
+      }
+      if (hasStateTransferRequest()) {
+        hash = (37 * hash) + STATETRANSFERREQUEST_FIELD_NUMBER;
+        hash = (53 * hash) + getStateTransferRequest().hashCode();
+      }
+      if (hasStateTransferReply()) {
+        hash = (37 * hash) + STATE_TRANSFER_REPLY_FIELD_NUMBER;
+        hash = (53 * hash) + getStateTransferReply().hashCode();
       }
       if (hasMergeProtocolProposal()) {
         hash = (37 * hash) + MERGEPROTOCOLPROPOSAL_FIELD_NUMBER;
@@ -7553,7 +8912,9 @@ public final class Protocol {
                 .alwaysUseFieldBuilders) {
           getOperationInfoFieldBuilder();
           getMoneyTransferFieldBuilder();
-          getStateTransferFieldBuilder();
+          getStateUpdateFieldBuilder();
+          getStateTransferRequestFieldBuilder();
+          getStateTransferReplyFieldBuilder();
           getMergeProtocolProposalFieldBuilder();
         }
       }
@@ -7578,18 +8939,30 @@ public final class Protocol {
           moneyTransferBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000004);
-        if (stateTransferBuilder_ == null) {
-          stateTransfer_ = null;
+        if (stateUpdateBuilder_ == null) {
+          stateUpdate_ = null;
         } else {
-          stateTransferBuilder_.clear();
+          stateUpdateBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000008);
+        if (stateTransferRequestBuilder_ == null) {
+          stateTransferRequest_ = null;
+        } else {
+          stateTransferRequestBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        if (stateTransferReplyBuilder_ == null) {
+          stateTransferReply_ = null;
+        } else {
+          stateTransferReplyBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000020);
         if (mergeProtocolProposalBuilder_ == null) {
           mergeProtocolProposal_ = null;
         } else {
           mergeProtocolProposalBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
 
@@ -7641,20 +9014,36 @@ public final class Protocol {
           to_bitField0_ |= 0x00000004;
         }
         if (((from_bitField0_ & 0x00000008) != 0)) {
-          if (stateTransferBuilder_ == null) {
-            result.stateTransfer_ = stateTransfer_;
+          if (stateUpdateBuilder_ == null) {
+            result.stateUpdate_ = stateUpdate_;
           } else {
-            result.stateTransfer_ = stateTransferBuilder_.build();
+            result.stateUpdate_ = stateUpdateBuilder_.build();
           }
           to_bitField0_ |= 0x00000008;
         }
         if (((from_bitField0_ & 0x00000010) != 0)) {
+          if (stateTransferRequestBuilder_ == null) {
+            result.stateTransferRequest_ = stateTransferRequest_;
+          } else {
+            result.stateTransferRequest_ = stateTransferRequestBuilder_.build();
+          }
+          to_bitField0_ |= 0x00000010;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          if (stateTransferReplyBuilder_ == null) {
+            result.stateTransferReply_ = stateTransferReply_;
+          } else {
+            result.stateTransferReply_ = stateTransferReplyBuilder_.build();
+          }
+          to_bitField0_ |= 0x00000020;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
           if (mergeProtocolProposalBuilder_ == null) {
             result.mergeProtocolProposal_ = mergeProtocolProposal_;
           } else {
             result.mergeProtocolProposal_ = mergeProtocolProposalBuilder_.build();
           }
-          to_bitField0_ |= 0x00000010;
+          to_bitField0_ |= 0x00000040;
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -7720,8 +9109,14 @@ public final class Protocol {
         if (other.hasMoneyTransfer()) {
           mergeMoneyTransfer(other.getMoneyTransfer());
         }
-        if (other.hasStateTransfer()) {
-          mergeStateTransfer(other.getStateTransfer());
+        if (other.hasStateUpdate()) {
+          mergeStateUpdate(other.getStateUpdate());
+        }
+        if (other.hasStateTransferRequest()) {
+          mergeStateTransferRequest(other.getStateTransferRequest());
+        }
+        if (other.hasStateTransferReply()) {
+          mergeStateTransferReply(other.getStateTransferReply());
         }
         if (other.hasMergeProtocolProposal()) {
           mergeMergeProtocolProposal(other.getMergeProtocolProposal());
@@ -7843,7 +9238,7 @@ public final class Protocol {
 
       private int accountId_ ;
       /**
-       * <code>int32 account_id = 3;</code>
+       * <code>optional int32 account_id = 3;</code>
        * @return Whether the accountId field is set.
        */
       @java.lang.Override
@@ -7851,7 +9246,7 @@ public final class Protocol {
         return ((bitField0_ & 0x00000001) != 0);
       }
       /**
-       * <code>int32 account_id = 3;</code>
+       * <code>optional int32 account_id = 3;</code>
        * @return The accountId.
        */
       @java.lang.Override
@@ -7859,7 +9254,7 @@ public final class Protocol {
         return accountId_;
       }
       /**
-       * <code>int32 account_id = 3;</code>
+       * <code>optional int32 account_id = 3;</code>
        * @param value The accountId to set.
        * @return This builder for chaining.
        */
@@ -7870,7 +9265,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>int32 account_id = 3;</code>
+       * <code>optional int32 account_id = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearAccountId() {
@@ -7888,7 +9283,7 @@ public final class Protocol {
        * Information about the operation
        * </pre>
        *
-       * <code>.BankOperation operationInfo = 4;</code>
+       * <code>optional .BankOperation operationInfo = 4;</code>
        * @return Whether the operationInfo field is set.
        */
       public boolean hasOperationInfo() {
@@ -7899,7 +9294,7 @@ public final class Protocol {
        * Information about the operation
        * </pre>
        *
-       * <code>.BankOperation operationInfo = 4;</code>
+       * <code>optional .BankOperation operationInfo = 4;</code>
        * @return The operationInfo.
        */
       public Protocol.BankOperation getOperationInfo() {
@@ -7914,7 +9309,7 @@ public final class Protocol {
        * Information about the operation
        * </pre>
        *
-       * <code>.BankOperation operationInfo = 4;</code>
+       * <code>optional .BankOperation operationInfo = 4;</code>
        */
       public Builder setOperationInfo(Protocol.BankOperation value) {
         if (operationInfoBuilder_ == null) {
@@ -7934,7 +9329,7 @@ public final class Protocol {
        * Information about the operation
        * </pre>
        *
-       * <code>.BankOperation operationInfo = 4;</code>
+       * <code>optional .BankOperation operationInfo = 4;</code>
        */
       public Builder setOperationInfo(
           Protocol.BankOperation.Builder builderForValue) {
@@ -7952,7 +9347,7 @@ public final class Protocol {
        * Information about the operation
        * </pre>
        *
-       * <code>.BankOperation operationInfo = 4;</code>
+       * <code>optional .BankOperation operationInfo = 4;</code>
        */
       public Builder mergeOperationInfo(Protocol.BankOperation value) {
         if (operationInfoBuilder_ == null) {
@@ -7976,7 +9371,7 @@ public final class Protocol {
        * Information about the operation
        * </pre>
        *
-       * <code>.BankOperation operationInfo = 4;</code>
+       * <code>optional .BankOperation operationInfo = 4;</code>
        */
       public Builder clearOperationInfo() {
         if (operationInfoBuilder_ == null) {
@@ -7993,7 +9388,7 @@ public final class Protocol {
        * Information about the operation
        * </pre>
        *
-       * <code>.BankOperation operationInfo = 4;</code>
+       * <code>optional .BankOperation operationInfo = 4;</code>
        */
       public Protocol.BankOperation.Builder getOperationInfoBuilder() {
         bitField0_ |= 0x00000002;
@@ -8005,7 +9400,7 @@ public final class Protocol {
        * Information about the operation
        * </pre>
        *
-       * <code>.BankOperation operationInfo = 4;</code>
+       * <code>optional .BankOperation operationInfo = 4;</code>
        */
       public Protocol.BankOperationOrBuilder getOperationInfoOrBuilder() {
         if (operationInfoBuilder_ != null) {
@@ -8020,7 +9415,7 @@ public final class Protocol {
        * Information about the operation
        * </pre>
        *
-       * <code>.BankOperation operationInfo = 4;</code>
+       * <code>optional .BankOperation operationInfo = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           Protocol.BankOperation, Protocol.BankOperation.Builder, Protocol.BankOperationOrBuilder> 
@@ -8044,7 +9439,7 @@ public final class Protocol {
        * Money transfer operation
        * </pre>
        *
-       * <code>.MoneyTransfer moneyTransfer = 5;</code>
+       * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
        * @return Whether the moneyTransfer field is set.
        */
       public boolean hasMoneyTransfer() {
@@ -8055,7 +9450,7 @@ public final class Protocol {
        * Money transfer operation
        * </pre>
        *
-       * <code>.MoneyTransfer moneyTransfer = 5;</code>
+       * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
        * @return The moneyTransfer.
        */
       public Protocol.MoneyTransfer getMoneyTransfer() {
@@ -8070,7 +9465,7 @@ public final class Protocol {
        * Money transfer operation
        * </pre>
        *
-       * <code>.MoneyTransfer moneyTransfer = 5;</code>
+       * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
        */
       public Builder setMoneyTransfer(Protocol.MoneyTransfer value) {
         if (moneyTransferBuilder_ == null) {
@@ -8090,7 +9485,7 @@ public final class Protocol {
        * Money transfer operation
        * </pre>
        *
-       * <code>.MoneyTransfer moneyTransfer = 5;</code>
+       * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
        */
       public Builder setMoneyTransfer(
           Protocol.MoneyTransfer.Builder builderForValue) {
@@ -8108,7 +9503,7 @@ public final class Protocol {
        * Money transfer operation
        * </pre>
        *
-       * <code>.MoneyTransfer moneyTransfer = 5;</code>
+       * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
        */
       public Builder mergeMoneyTransfer(Protocol.MoneyTransfer value) {
         if (moneyTransferBuilder_ == null) {
@@ -8132,7 +9527,7 @@ public final class Protocol {
        * Money transfer operation
        * </pre>
        *
-       * <code>.MoneyTransfer moneyTransfer = 5;</code>
+       * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
        */
       public Builder clearMoneyTransfer() {
         if (moneyTransferBuilder_ == null) {
@@ -8149,7 +9544,7 @@ public final class Protocol {
        * Money transfer operation
        * </pre>
        *
-       * <code>.MoneyTransfer moneyTransfer = 5;</code>
+       * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
        */
       public Protocol.MoneyTransfer.Builder getMoneyTransferBuilder() {
         bitField0_ |= 0x00000004;
@@ -8161,7 +9556,7 @@ public final class Protocol {
        * Money transfer operation
        * </pre>
        *
-       * <code>.MoneyTransfer moneyTransfer = 5;</code>
+       * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
        */
       public Protocol.MoneyTransferOrBuilder getMoneyTransferOrBuilder() {
         if (moneyTransferBuilder_ != null) {
@@ -8176,7 +9571,7 @@ public final class Protocol {
        * Money transfer operation
        * </pre>
        *
-       * <code>.MoneyTransfer moneyTransfer = 5;</code>
+       * <code>optional .MoneyTransfer moneyTransfer = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           Protocol.MoneyTransfer, Protocol.MoneyTransfer.Builder, Protocol.MoneyTransferOrBuilder> 
@@ -8192,160 +9587,472 @@ public final class Protocol {
         return moneyTransferBuilder_;
       }
 
-      private Protocol.StateTransfer stateTransfer_;
+      private Protocol.StateUpdate stateUpdate_;
       private com.google.protobuf.SingleFieldBuilderV3<
-          Protocol.StateTransfer, Protocol.StateTransfer.Builder, Protocol.StateTransferOrBuilder> stateTransferBuilder_;
+          Protocol.StateUpdate, Protocol.StateUpdate.Builder, Protocol.StateUpdateOrBuilder> stateUpdateBuilder_;
       /**
        * <pre>
-       * State transfer
+       * Update State
        * </pre>
        *
-       * <code>.StateTransfer stateTransfer = 6;</code>
-       * @return Whether the stateTransfer field is set.
+       * <code>optional .StateUpdate stateUpdate = 6;</code>
+       * @return Whether the stateUpdate field is set.
        */
-      public boolean hasStateTransfer() {
+      public boolean hasStateUpdate() {
         return ((bitField0_ & 0x00000008) != 0);
       }
       /**
        * <pre>
-       * State transfer
+       * Update State
        * </pre>
        *
-       * <code>.StateTransfer stateTransfer = 6;</code>
-       * @return The stateTransfer.
+       * <code>optional .StateUpdate stateUpdate = 6;</code>
+       * @return The stateUpdate.
        */
-      public Protocol.StateTransfer getStateTransfer() {
-        if (stateTransferBuilder_ == null) {
-          return stateTransfer_ == null ? Protocol.StateTransfer.getDefaultInstance() : stateTransfer_;
+      public Protocol.StateUpdate getStateUpdate() {
+        if (stateUpdateBuilder_ == null) {
+          return stateUpdate_ == null ? Protocol.StateUpdate.getDefaultInstance() : stateUpdate_;
         } else {
-          return stateTransferBuilder_.getMessage();
+          return stateUpdateBuilder_.getMessage();
         }
       }
       /**
        * <pre>
-       * State transfer
+       * Update State
        * </pre>
        *
-       * <code>.StateTransfer stateTransfer = 6;</code>
+       * <code>optional .StateUpdate stateUpdate = 6;</code>
        */
-      public Builder setStateTransfer(Protocol.StateTransfer value) {
-        if (stateTransferBuilder_ == null) {
+      public Builder setStateUpdate(Protocol.StateUpdate value) {
+        if (stateUpdateBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          stateTransfer_ = value;
+          stateUpdate_ = value;
           onChanged();
         } else {
-          stateTransferBuilder_.setMessage(value);
+          stateUpdateBuilder_.setMessage(value);
         }
         bitField0_ |= 0x00000008;
         return this;
       }
       /**
        * <pre>
-       * State transfer
+       * Update State
        * </pre>
        *
-       * <code>.StateTransfer stateTransfer = 6;</code>
+       * <code>optional .StateUpdate stateUpdate = 6;</code>
        */
-      public Builder setStateTransfer(
-          Protocol.StateTransfer.Builder builderForValue) {
-        if (stateTransferBuilder_ == null) {
-          stateTransfer_ = builderForValue.build();
+      public Builder setStateUpdate(
+          Protocol.StateUpdate.Builder builderForValue) {
+        if (stateUpdateBuilder_ == null) {
+          stateUpdate_ = builderForValue.build();
           onChanged();
         } else {
-          stateTransferBuilder_.setMessage(builderForValue.build());
+          stateUpdateBuilder_.setMessage(builderForValue.build());
         }
         bitField0_ |= 0x00000008;
         return this;
       }
       /**
        * <pre>
-       * State transfer
+       * Update State
        * </pre>
        *
-       * <code>.StateTransfer stateTransfer = 6;</code>
+       * <code>optional .StateUpdate stateUpdate = 6;</code>
        */
-      public Builder mergeStateTransfer(Protocol.StateTransfer value) {
-        if (stateTransferBuilder_ == null) {
+      public Builder mergeStateUpdate(Protocol.StateUpdate value) {
+        if (stateUpdateBuilder_ == null) {
           if (((bitField0_ & 0x00000008) != 0) &&
-              stateTransfer_ != null &&
-              stateTransfer_ != Protocol.StateTransfer.getDefaultInstance()) {
-            stateTransfer_ =
-              Protocol.StateTransfer.newBuilder(stateTransfer_).mergeFrom(value).buildPartial();
+              stateUpdate_ != null &&
+              stateUpdate_ != Protocol.StateUpdate.getDefaultInstance()) {
+            stateUpdate_ =
+              Protocol.StateUpdate.newBuilder(stateUpdate_).mergeFrom(value).buildPartial();
           } else {
-            stateTransfer_ = value;
+            stateUpdate_ = value;
           }
           onChanged();
         } else {
-          stateTransferBuilder_.mergeFrom(value);
+          stateUpdateBuilder_.mergeFrom(value);
         }
         bitField0_ |= 0x00000008;
         return this;
       }
       /**
        * <pre>
-       * State transfer
+       * Update State
        * </pre>
        *
-       * <code>.StateTransfer stateTransfer = 6;</code>
+       * <code>optional .StateUpdate stateUpdate = 6;</code>
        */
-      public Builder clearStateTransfer() {
-        if (stateTransferBuilder_ == null) {
-          stateTransfer_ = null;
+      public Builder clearStateUpdate() {
+        if (stateUpdateBuilder_ == null) {
+          stateUpdate_ = null;
           onChanged();
         } else {
-          stateTransferBuilder_.clear();
+          stateUpdateBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
       /**
        * <pre>
-       * State transfer
+       * Update State
        * </pre>
        *
-       * <code>.StateTransfer stateTransfer = 6;</code>
+       * <code>optional .StateUpdate stateUpdate = 6;</code>
        */
-      public Protocol.StateTransfer.Builder getStateTransferBuilder() {
+      public Protocol.StateUpdate.Builder getStateUpdateBuilder() {
         bitField0_ |= 0x00000008;
         onChanged();
-        return getStateTransferFieldBuilder().getBuilder();
+        return getStateUpdateFieldBuilder().getBuilder();
       }
       /**
        * <pre>
-       * State transfer
+       * Update State
        * </pre>
        *
-       * <code>.StateTransfer stateTransfer = 6;</code>
+       * <code>optional .StateUpdate stateUpdate = 6;</code>
        */
-      public Protocol.StateTransferOrBuilder getStateTransferOrBuilder() {
-        if (stateTransferBuilder_ != null) {
-          return stateTransferBuilder_.getMessageOrBuilder();
+      public Protocol.StateUpdateOrBuilder getStateUpdateOrBuilder() {
+        if (stateUpdateBuilder_ != null) {
+          return stateUpdateBuilder_.getMessageOrBuilder();
         } else {
-          return stateTransfer_ == null ?
-              Protocol.StateTransfer.getDefaultInstance() : stateTransfer_;
+          return stateUpdate_ == null ?
+              Protocol.StateUpdate.getDefaultInstance() : stateUpdate_;
         }
       }
       /**
        * <pre>
-       * State transfer
+       * Update State
        * </pre>
        *
-       * <code>.StateTransfer stateTransfer = 6;</code>
+       * <code>optional .StateUpdate stateUpdate = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          Protocol.StateTransfer, Protocol.StateTransfer.Builder, Protocol.StateTransferOrBuilder> 
-          getStateTransferFieldBuilder() {
-        if (stateTransferBuilder_ == null) {
-          stateTransferBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              Protocol.StateTransfer, Protocol.StateTransfer.Builder, Protocol.StateTransferOrBuilder>(
-                  getStateTransfer(),
+          Protocol.StateUpdate, Protocol.StateUpdate.Builder, Protocol.StateUpdateOrBuilder> 
+          getStateUpdateFieldBuilder() {
+        if (stateUpdateBuilder_ == null) {
+          stateUpdateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              Protocol.StateUpdate, Protocol.StateUpdate.Builder, Protocol.StateUpdateOrBuilder>(
+                  getStateUpdate(),
                   getParentForChildren(),
                   isClean());
-          stateTransfer_ = null;
+          stateUpdate_ = null;
         }
-        return stateTransferBuilder_;
+        return stateUpdateBuilder_;
+      }
+
+      private Protocol.StateTransferRequest stateTransferRequest_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          Protocol.StateTransferRequest, Protocol.StateTransferRequest.Builder, Protocol.StateTransferRequestOrBuilder> stateTransferRequestBuilder_;
+      /**
+       * <pre>
+       * Request for state
+       * </pre>
+       *
+       * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+       * @return Whether the stateTransferRequest field is set.
+       */
+      public boolean hasStateTransferRequest() {
+        return ((bitField0_ & 0x00000010) != 0);
+      }
+      /**
+       * <pre>
+       * Request for state
+       * </pre>
+       *
+       * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+       * @return The stateTransferRequest.
+       */
+      public Protocol.StateTransferRequest getStateTransferRequest() {
+        if (stateTransferRequestBuilder_ == null) {
+          return stateTransferRequest_ == null ? Protocol.StateTransferRequest.getDefaultInstance() : stateTransferRequest_;
+        } else {
+          return stateTransferRequestBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       * Request for state
+       * </pre>
+       *
+       * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+       */
+      public Builder setStateTransferRequest(Protocol.StateTransferRequest value) {
+        if (stateTransferRequestBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          stateTransferRequest_ = value;
+          onChanged();
+        } else {
+          stateTransferRequestBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <pre>
+       * Request for state
+       * </pre>
+       *
+       * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+       */
+      public Builder setStateTransferRequest(
+          Protocol.StateTransferRequest.Builder builderForValue) {
+        if (stateTransferRequestBuilder_ == null) {
+          stateTransferRequest_ = builderForValue.build();
+          onChanged();
+        } else {
+          stateTransferRequestBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <pre>
+       * Request for state
+       * </pre>
+       *
+       * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+       */
+      public Builder mergeStateTransferRequest(Protocol.StateTransferRequest value) {
+        if (stateTransferRequestBuilder_ == null) {
+          if (((bitField0_ & 0x00000010) != 0) &&
+              stateTransferRequest_ != null &&
+              stateTransferRequest_ != Protocol.StateTransferRequest.getDefaultInstance()) {
+            stateTransferRequest_ =
+              Protocol.StateTransferRequest.newBuilder(stateTransferRequest_).mergeFrom(value).buildPartial();
+          } else {
+            stateTransferRequest_ = value;
+          }
+          onChanged();
+        } else {
+          stateTransferRequestBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <pre>
+       * Request for state
+       * </pre>
+       *
+       * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+       */
+      public Builder clearStateTransferRequest() {
+        if (stateTransferRequestBuilder_ == null) {
+          stateTransferRequest_ = null;
+          onChanged();
+        } else {
+          stateTransferRequestBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000010);
+        return this;
+      }
+      /**
+       * <pre>
+       * Request for state
+       * </pre>
+       *
+       * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+       */
+      public Protocol.StateTransferRequest.Builder getStateTransferRequestBuilder() {
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return getStateTransferRequestFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * Request for state
+       * </pre>
+       *
+       * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+       */
+      public Protocol.StateTransferRequestOrBuilder getStateTransferRequestOrBuilder() {
+        if (stateTransferRequestBuilder_ != null) {
+          return stateTransferRequestBuilder_.getMessageOrBuilder();
+        } else {
+          return stateTransferRequest_ == null ?
+              Protocol.StateTransferRequest.getDefaultInstance() : stateTransferRequest_;
+        }
+      }
+      /**
+       * <pre>
+       * Request for state
+       * </pre>
+       *
+       * <code>optional .StateTransferRequest stateTransferRequest = 7;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          Protocol.StateTransferRequest, Protocol.StateTransferRequest.Builder, Protocol.StateTransferRequestOrBuilder> 
+          getStateTransferRequestFieldBuilder() {
+        if (stateTransferRequestBuilder_ == null) {
+          stateTransferRequestBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              Protocol.StateTransferRequest, Protocol.StateTransferRequest.Builder, Protocol.StateTransferRequestOrBuilder>(
+                  getStateTransferRequest(),
+                  getParentForChildren(),
+                  isClean());
+          stateTransferRequest_ = null;
+        }
+        return stateTransferRequestBuilder_;
+      }
+
+      private Protocol.StateTransferReply stateTransferReply_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          Protocol.StateTransferReply, Protocol.StateTransferReply.Builder, Protocol.StateTransferReplyOrBuilder> stateTransferReplyBuilder_;
+      /**
+       * <pre>
+       * Reply from the leader with the requested state
+       * </pre>
+       *
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       * @return Whether the stateTransferReply field is set.
+       */
+      public boolean hasStateTransferReply() {
+        return ((bitField0_ & 0x00000020) != 0);
+      }
+      /**
+       * <pre>
+       * Reply from the leader with the requested state
+       * </pre>
+       *
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       * @return The stateTransferReply.
+       */
+      public Protocol.StateTransferReply getStateTransferReply() {
+        if (stateTransferReplyBuilder_ == null) {
+          return stateTransferReply_ == null ? Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
+        } else {
+          return stateTransferReplyBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       * Reply from the leader with the requested state
+       * </pre>
+       *
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Builder setStateTransferReply(Protocol.StateTransferReply value) {
+        if (stateTransferReplyBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          stateTransferReply_ = value;
+          onChanged();
+        } else {
+          stateTransferReplyBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <pre>
+       * Reply from the leader with the requested state
+       * </pre>
+       *
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Builder setStateTransferReply(
+          Protocol.StateTransferReply.Builder builderForValue) {
+        if (stateTransferReplyBuilder_ == null) {
+          stateTransferReply_ = builderForValue.build();
+          onChanged();
+        } else {
+          stateTransferReplyBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <pre>
+       * Reply from the leader with the requested state
+       * </pre>
+       *
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Builder mergeStateTransferReply(Protocol.StateTransferReply value) {
+        if (stateTransferReplyBuilder_ == null) {
+          if (((bitField0_ & 0x00000020) != 0) &&
+              stateTransferReply_ != null &&
+              stateTransferReply_ != Protocol.StateTransferReply.getDefaultInstance()) {
+            stateTransferReply_ =
+              Protocol.StateTransferReply.newBuilder(stateTransferReply_).mergeFrom(value).buildPartial();
+          } else {
+            stateTransferReply_ = value;
+          }
+          onChanged();
+        } else {
+          stateTransferReplyBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000020;
+        return this;
+      }
+      /**
+       * <pre>
+       * Reply from the leader with the requested state
+       * </pre>
+       *
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Builder clearStateTransferReply() {
+        if (stateTransferReplyBuilder_ == null) {
+          stateTransferReply_ = null;
+          onChanged();
+        } else {
+          stateTransferReplyBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000020);
+        return this;
+      }
+      /**
+       * <pre>
+       * Reply from the leader with the requested state
+       * </pre>
+       *
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Protocol.StateTransferReply.Builder getStateTransferReplyBuilder() {
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return getStateTransferReplyFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * Reply from the leader with the requested state
+       * </pre>
+       *
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      public Protocol.StateTransferReplyOrBuilder getStateTransferReplyOrBuilder() {
+        if (stateTransferReplyBuilder_ != null) {
+          return stateTransferReplyBuilder_.getMessageOrBuilder();
+        } else {
+          return stateTransferReply_ == null ?
+              Protocol.StateTransferReply.getDefaultInstance() : stateTransferReply_;
+        }
+      }
+      /**
+       * <pre>
+       * Reply from the leader with the requested state
+       * </pre>
+       *
+       * <code>optional .StateTransferReply state_transfer_reply = 8;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          Protocol.StateTransferReply, Protocol.StateTransferReply.Builder, Protocol.StateTransferReplyOrBuilder> 
+          getStateTransferReplyFieldBuilder() {
+        if (stateTransferReplyBuilder_ == null) {
+          stateTransferReplyBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              Protocol.StateTransferReply, Protocol.StateTransferReply.Builder, Protocol.StateTransferReplyOrBuilder>(
+                  getStateTransferReply(),
+                  getParentForChildren(),
+                  isClean());
+          stateTransferReply_ = null;
+        }
+        return stateTransferReplyBuilder_;
       }
 
       private Protocol.MergeProtocolProposal mergeProtocolProposal_;
@@ -8356,18 +10063,18 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        * @return Whether the mergeProtocolProposal field is set.
        */
       public boolean hasMergeProtocolProposal() {
-        return ((bitField0_ & 0x00000010) != 0);
+        return ((bitField0_ & 0x00000040) != 0);
       }
       /**
        * <pre>
        * Merge protocol proposal
        * </pre>
        *
-       * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        * @return The mergeProtocolProposal.
        */
       public Protocol.MergeProtocolProposal getMergeProtocolProposal() {
@@ -8382,7 +10089,7 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Builder setMergeProtocolProposal(Protocol.MergeProtocolProposal value) {
         if (mergeProtocolProposalBuilder_ == null) {
@@ -8394,7 +10101,7 @@ public final class Protocol {
         } else {
           mergeProtocolProposalBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000040;
         return this;
       }
       /**
@@ -8402,7 +10109,7 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Builder setMergeProtocolProposal(
           Protocol.MergeProtocolProposal.Builder builderForValue) {
@@ -8412,7 +10119,7 @@ public final class Protocol {
         } else {
           mergeProtocolProposalBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000040;
         return this;
       }
       /**
@@ -8420,11 +10127,11 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Builder mergeMergeProtocolProposal(Protocol.MergeProtocolProposal value) {
         if (mergeProtocolProposalBuilder_ == null) {
-          if (((bitField0_ & 0x00000010) != 0) &&
+          if (((bitField0_ & 0x00000040) != 0) &&
               mergeProtocolProposal_ != null &&
               mergeProtocolProposal_ != Protocol.MergeProtocolProposal.getDefaultInstance()) {
             mergeProtocolProposal_ =
@@ -8436,7 +10143,7 @@ public final class Protocol {
         } else {
           mergeProtocolProposalBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000040;
         return this;
       }
       /**
@@ -8444,7 +10151,7 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Builder clearMergeProtocolProposal() {
         if (mergeProtocolProposalBuilder_ == null) {
@@ -8453,7 +10160,7 @@ public final class Protocol {
         } else {
           mergeProtocolProposalBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
       /**
@@ -8461,10 +10168,10 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Protocol.MergeProtocolProposal.Builder getMergeProtocolProposalBuilder() {
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000040;
         onChanged();
         return getMergeProtocolProposalFieldBuilder().getBuilder();
       }
@@ -8473,7 +10180,7 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       public Protocol.MergeProtocolProposalOrBuilder getMergeProtocolProposalOrBuilder() {
         if (mergeProtocolProposalBuilder_ != null) {
@@ -8488,7 +10195,7 @@ public final class Protocol {
        * Merge protocol proposal
        * </pre>
        *
-       * <code>.MergeProtocolProposal mergeProtocolProposal = 7;</code>
+       * <code>optional .MergeProtocolProposal mergeProtocolProposal = 9;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           Protocol.MergeProtocolProposal, Protocol.MergeProtocolProposal.Builder, Protocol.MergeProtocolProposalOrBuilder> 
@@ -8578,50 +10285,50 @@ public final class Protocol {
     Protocol.OperationType getType();
 
     /**
-     * <code>int32 account_id = 3;</code>
+     * <code>optional int32 account_id = 3;</code>
      * @return Whether the accountId field is set.
      */
     boolean hasAccountId();
     /**
-     * <code>int32 account_id = 3;</code>
+     * <code>optional int32 account_id = 3;</code>
      * @return The accountId.
      */
     int getAccountId();
 
     /**
-     * <code>bool result = 4;</code>
+     * <code>optional bool result = 4;</code>
      * @return Whether the result field is set.
      */
     boolean hasResult();
     /**
-     * <code>bool result = 4;</code>
+     * <code>optional bool result = 4;</code>
      * @return The result.
      */
     boolean getResult();
 
     /**
-     * <code>int32 value = 5;</code>
+     * <code>optional int32 value = 5;</code>
      * @return Whether the value field is set.
      */
     boolean hasValue();
     /**
-     * <code>int32 value = 5;</code>
+     * <code>optional int32 value = 5;</code>
      * @return The value.
      */
     int getValue();
 
     /**
-     * <code>.AccountStatement account_statement = 6;</code>
+     * <code>optional .AccountStatement account_statement = 6;</code>
      * @return Whether the accountStatement field is set.
      */
     boolean hasAccountStatement();
     /**
-     * <code>.AccountStatement account_statement = 6;</code>
+     * <code>optional .AccountStatement account_statement = 6;</code>
      * @return The accountStatement.
      */
     Protocol.AccountStatement getAccountStatement();
     /**
-     * <code>.AccountStatement account_statement = 6;</code>
+     * <code>optional .AccountStatement account_statement = 6;</code>
      */
     Protocol.AccountStatementOrBuilder getAccountStatementOrBuilder();
   }
@@ -8777,7 +10484,7 @@ public final class Protocol {
     public static final int ACCOUNT_ID_FIELD_NUMBER = 3;
     private int accountId_;
     /**
-     * <code>int32 account_id = 3;</code>
+     * <code>optional int32 account_id = 3;</code>
      * @return Whether the accountId field is set.
      */
     @java.lang.Override
@@ -8785,7 +10492,7 @@ public final class Protocol {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>int32 account_id = 3;</code>
+     * <code>optional int32 account_id = 3;</code>
      * @return The accountId.
      */
     @java.lang.Override
@@ -8796,7 +10503,7 @@ public final class Protocol {
     public static final int RESULT_FIELD_NUMBER = 4;
     private boolean result_;
     /**
-     * <code>bool result = 4;</code>
+     * <code>optional bool result = 4;</code>
      * @return Whether the result field is set.
      */
     @java.lang.Override
@@ -8804,7 +10511,7 @@ public final class Protocol {
       return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <code>bool result = 4;</code>
+     * <code>optional bool result = 4;</code>
      * @return The result.
      */
     @java.lang.Override
@@ -8815,7 +10522,7 @@ public final class Protocol {
     public static final int VALUE_FIELD_NUMBER = 5;
     private int value_;
     /**
-     * <code>int32 value = 5;</code>
+     * <code>optional int32 value = 5;</code>
      * @return Whether the value field is set.
      */
     @java.lang.Override
@@ -8823,7 +10530,7 @@ public final class Protocol {
       return ((bitField0_ & 0x00000004) != 0);
     }
     /**
-     * <code>int32 value = 5;</code>
+     * <code>optional int32 value = 5;</code>
      * @return The value.
      */
     @java.lang.Override
@@ -8834,7 +10541,7 @@ public final class Protocol {
     public static final int ACCOUNT_STATEMENT_FIELD_NUMBER = 6;
     private Protocol.AccountStatement accountStatement_;
     /**
-     * <code>.AccountStatement account_statement = 6;</code>
+     * <code>optional .AccountStatement account_statement = 6;</code>
      * @return Whether the accountStatement field is set.
      */
     @java.lang.Override
@@ -8842,7 +10549,7 @@ public final class Protocol {
       return ((bitField0_ & 0x00000008) != 0);
     }
     /**
-     * <code>.AccountStatement account_statement = 6;</code>
+     * <code>optional .AccountStatement account_statement = 6;</code>
      * @return The accountStatement.
      */
     @java.lang.Override
@@ -8850,7 +10557,7 @@ public final class Protocol {
       return accountStatement_ == null ? Protocol.AccountStatement.getDefaultInstance() : accountStatement_;
     }
     /**
-     * <code>.AccountStatement account_statement = 6;</code>
+     * <code>optional .AccountStatement account_statement = 6;</code>
      */
     @java.lang.Override
     public Protocol.AccountStatementOrBuilder getAccountStatementOrBuilder() {
@@ -9376,7 +11083,7 @@ public final class Protocol {
 
       private int accountId_ ;
       /**
-       * <code>int32 account_id = 3;</code>
+       * <code>optional int32 account_id = 3;</code>
        * @return Whether the accountId field is set.
        */
       @java.lang.Override
@@ -9384,7 +11091,7 @@ public final class Protocol {
         return ((bitField0_ & 0x00000001) != 0);
       }
       /**
-       * <code>int32 account_id = 3;</code>
+       * <code>optional int32 account_id = 3;</code>
        * @return The accountId.
        */
       @java.lang.Override
@@ -9392,7 +11099,7 @@ public final class Protocol {
         return accountId_;
       }
       /**
-       * <code>int32 account_id = 3;</code>
+       * <code>optional int32 account_id = 3;</code>
        * @param value The accountId to set.
        * @return This builder for chaining.
        */
@@ -9403,7 +11110,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>int32 account_id = 3;</code>
+       * <code>optional int32 account_id = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearAccountId() {
@@ -9415,7 +11122,7 @@ public final class Protocol {
 
       private boolean result_ ;
       /**
-       * <code>bool result = 4;</code>
+       * <code>optional bool result = 4;</code>
        * @return Whether the result field is set.
        */
       @java.lang.Override
@@ -9423,7 +11130,7 @@ public final class Protocol {
         return ((bitField0_ & 0x00000002) != 0);
       }
       /**
-       * <code>bool result = 4;</code>
+       * <code>optional bool result = 4;</code>
        * @return The result.
        */
       @java.lang.Override
@@ -9431,7 +11138,7 @@ public final class Protocol {
         return result_;
       }
       /**
-       * <code>bool result = 4;</code>
+       * <code>optional bool result = 4;</code>
        * @param value The result to set.
        * @return This builder for chaining.
        */
@@ -9442,7 +11149,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>bool result = 4;</code>
+       * <code>optional bool result = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearResult() {
@@ -9454,7 +11161,7 @@ public final class Protocol {
 
       private int value_ ;
       /**
-       * <code>int32 value = 5;</code>
+       * <code>optional int32 value = 5;</code>
        * @return Whether the value field is set.
        */
       @java.lang.Override
@@ -9462,7 +11169,7 @@ public final class Protocol {
         return ((bitField0_ & 0x00000004) != 0);
       }
       /**
-       * <code>int32 value = 5;</code>
+       * <code>optional int32 value = 5;</code>
        * @return The value.
        */
       @java.lang.Override
@@ -9470,7 +11177,7 @@ public final class Protocol {
         return value_;
       }
       /**
-       * <code>int32 value = 5;</code>
+       * <code>optional int32 value = 5;</code>
        * @param value The value to set.
        * @return This builder for chaining.
        */
@@ -9481,7 +11188,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>int32 value = 5;</code>
+       * <code>optional int32 value = 5;</code>
        * @return This builder for chaining.
        */
       public Builder clearValue() {
@@ -9495,14 +11202,14 @@ public final class Protocol {
       private com.google.protobuf.SingleFieldBuilderV3<
           Protocol.AccountStatement, Protocol.AccountStatement.Builder, Protocol.AccountStatementOrBuilder> accountStatementBuilder_;
       /**
-       * <code>.AccountStatement account_statement = 6;</code>
+       * <code>optional .AccountStatement account_statement = 6;</code>
        * @return Whether the accountStatement field is set.
        */
       public boolean hasAccountStatement() {
         return ((bitField0_ & 0x00000008) != 0);
       }
       /**
-       * <code>.AccountStatement account_statement = 6;</code>
+       * <code>optional .AccountStatement account_statement = 6;</code>
        * @return The accountStatement.
        */
       public Protocol.AccountStatement getAccountStatement() {
@@ -9513,7 +11220,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>.AccountStatement account_statement = 6;</code>
+       * <code>optional .AccountStatement account_statement = 6;</code>
        */
       public Builder setAccountStatement(Protocol.AccountStatement value) {
         if (accountStatementBuilder_ == null) {
@@ -9529,7 +11236,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.AccountStatement account_statement = 6;</code>
+       * <code>optional .AccountStatement account_statement = 6;</code>
        */
       public Builder setAccountStatement(
           Protocol.AccountStatement.Builder builderForValue) {
@@ -9543,7 +11250,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.AccountStatement account_statement = 6;</code>
+       * <code>optional .AccountStatement account_statement = 6;</code>
        */
       public Builder mergeAccountStatement(Protocol.AccountStatement value) {
         if (accountStatementBuilder_ == null) {
@@ -9563,7 +11270,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.AccountStatement account_statement = 6;</code>
+       * <code>optional .AccountStatement account_statement = 6;</code>
        */
       public Builder clearAccountStatement() {
         if (accountStatementBuilder_ == null) {
@@ -9576,7 +11283,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.AccountStatement account_statement = 6;</code>
+       * <code>optional .AccountStatement account_statement = 6;</code>
        */
       public Protocol.AccountStatement.Builder getAccountStatementBuilder() {
         bitField0_ |= 0x00000008;
@@ -9584,7 +11291,7 @@ public final class Protocol {
         return getAccountStatementFieldBuilder().getBuilder();
       }
       /**
-       * <code>.AccountStatement account_statement = 6;</code>
+       * <code>optional .AccountStatement account_statement = 6;</code>
        */
       public Protocol.AccountStatementOrBuilder getAccountStatementOrBuilder() {
         if (accountStatementBuilder_ != null) {
@@ -9595,7 +11302,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>.AccountStatement account_statement = 6;</code>
+       * <code>optional .AccountStatement account_statement = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           Protocol.AccountStatement, Protocol.AccountStatement.Builder, Protocol.AccountStatementOrBuilder> 
@@ -9684,20 +11391,35 @@ public final class Protocol {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_AccountStatement_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_StateTransfer_descriptor;
+    internal_static_StateUpdate_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_StateTransfer_fieldAccessorTable;
+      internal_static_StateUpdate_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_StateTransfer_AppliedCreditAccountsEntry_descriptor;
+    internal_static_StateUpdate_AppliedCreditAccountsEntry_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_StateTransfer_AppliedCreditAccountsEntry_fieldAccessorTable;
+      internal_static_StateUpdate_AppliedCreditAccountsEntry_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_StateTransferRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_StateTransferRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_StateTransferRequest_LastObservedStatesEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_StateTransferRequest_LastObservedStatesEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_StateTransferReply_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_StateTransferReply_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_StateTransferReply_AccountsStatesEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_StateTransferReply_AccountsStatesEntry_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_MergeProtocolProposal_descriptor;
   private static final 
@@ -9730,47 +11452,57 @@ public final class Protocol {
       "on\030\001 \001(\t\022-\n\tdate_hour\030\002 \001(\0132\032.google.pro" +
       "tobuf.Timestamp\022\026\n\016movement_value\030\003 \001(\005\022" +
       "\025\n\rbalance_after\030\004 \001(\005\"4\n\020AccountStateme" +
-      "nt\022 \n\tmovements\030\001 \003(\0132\r.MovementInfo\"\337\002\n" +
-      "\rStateTransfer\022\027\n\017stateTransferId\030\001 \001(\t\022" +
-      " \n\004type\030\002 \001(\0162\022.StateTransferType\022 \n\tsta" +
-      "teInfo\030\003 \003(\0132\r.MovementInfo\022\027\n\naccount_i" +
-      "d\030\004 \001(\005H\000\210\001\001\022%\n\010transfer\030\005 \001(\0132\016.MoneyTr" +
-      "ansferH\001\210\001\001\022H\n\025appliedCreditAccounts\030\006 \003" +
-      "(\0132).StateTransfer.AppliedCreditAccounts" +
-      "Entry\032K\n\032AppliedCreditAccountsEntry\022\013\n\003k" +
-      "ey\030\001 \001(\005\022\034\n\005value\030\002 \001(\0132\r.MovementInfo:\002" +
-      "8\001B\r\n\013_account_idB\013\n\t_transfer\"\222\001\n\024State" +
-      "TransferRequest\022\027\n\017stateTransferId\030\001 \001(\t" +
-      "\022\'\n\004type\030\002 \001(\0162\031.StateTransferRequestTyp" +
-      "e\022 \n\023last_observed_state\030\003 \001(\005H\000\210\001\001B\026\n\024_" +
-      "last_observed_state\"_\n\025MergeProtocolProp" +
-      "osal\022\020\n\010serverId\030\001 \001(\t\022\032\n\022n_applied_mess" +
-      "ages\030\002 \001(\005\022\030\n\020n_known_messages\030\003 \001(\005\"\366\002\n" +
-      "\tOperation\022\023\n\013operationId\030\001 \001(\005\022\034\n\004type\030" +
-      "\002 \001(\0162\016.OperationType\022\027\n\naccount_id\030\003 \001(" +
-      "\005H\000\210\001\001\022*\n\roperationInfo\030\004 \001(\0132\016.BankOper" +
-      "ationH\001\210\001\001\022*\n\rmoneyTransfer\030\005 \001(\0132\016.Mone" +
-      "yTransferH\002\210\001\001\022*\n\rstateTransfer\030\006 \001(\0132\016." +
-      "StateTransferH\003\210\001\001\022:\n\025mergeProtocolPropo" +
-      "sal\030\007 \001(\0132\026.MergeProtocolProposalH\004\210\001\001B\r" +
-      "\n\013_account_idB\020\n\016_operationInfoB\020\n\016_mone" +
-      "yTransferB\020\n\016_stateTransferB\030\n\026_mergePro" +
-      "tocolProposal\"\362\001\n\016OperationReply\022\023\n\013oper" +
-      "ationId\030\001 \001(\005\022\034\n\004type\030\002 \001(\0162\016.OperationT" +
-      "ype\022\027\n\naccount_id\030\003 \001(\005H\000\210\001\001\022\023\n\006result\030\004" +
-      " \001(\010H\001\210\001\001\022\022\n\005value\030\005 \001(\005H\002\210\001\001\0221\n\021account" +
-      "_statement\030\006 \001(\0132\021.AccountStatementH\003\210\001\001" +
-      "B\r\n\013_account_idB\t\n\007_resultB\010\n\006_valueB\024\n\022" +
-      "_account_statement*\261\001\n\rOperationType\022\013\n\007" +
-      "BALANCE\020\000\022\014\n\010MOVEMENT\020\001\022\014\n\010TRANSFER\020\002\022\025\n" +
-      "\021ACCOUNT_STATEMENT\020\003\022\023\n\017INTEREST_CREDIT\020" +
-      "\004\022\022\n\016STATE_TRANSFER\020\005\022\032\n\026STATE_TRANSFER_" +
-      "REQUEST\020\006\022\033\n\027MERGE_PROTOCOL_PROPOSAL\020\007*b" +
-      "\n\021StateTransferType\022\026\n\022TRANSFER_OPERATIO" +
-      "N\020\000\022\026\n\022MOVEMENT_OPERATION\020\001\022\035\n\031INTEREST_" +
-      "CREDIT_OPERATION\020\002*A\n\030StateTransferReque" +
-      "stType\022\016\n\nFULL_STATE\020\000\022\025\n\021INCREMENTAL_ST" +
-      "ATE\020\001b\006proto3"
+      "nt\022 \n\tmovements\030\001 \003(\0132\r.MovementInfo\"\331\002\n" +
+      "\013StateUpdate\022\027\n\017stateTransferId\030\001 \001(\t\022\036\n" +
+      "\004type\030\002 \001(\0162\020.StateUpdateType\022 \n\tstateIn" +
+      "fo\030\003 \003(\0132\r.MovementInfo\022\027\n\naccount_id\030\004 " +
+      "\001(\005H\000\210\001\001\022%\n\010transfer\030\005 \001(\0132\016.MoneyTransf" +
+      "erH\001\210\001\001\022F\n\025appliedCreditAccounts\030\006 \003(\0132\'" +
+      ".StateUpdate.AppliedCreditAccountsEntry\032" +
+      "K\n\032AppliedCreditAccountsEntry\022\013\n\003key\030\001 \001" +
+      "(\005\022\034\n\005value\030\002 \001(\0132\r.MovementInfo:\0028\001B\r\n\013" +
+      "_account_idB\013\n\t_transfer\"\331\001\n\024StateTransf" +
+      "erRequest\022\020\n\010serverId\030\001 \001(\t\022\'\n\004type\030\002 \001(" +
+      "\0162\031.StateTransferRequestType\022K\n\024last_obs" +
+      "erved_states\030\003 \003(\0132-.StateTransferReques" +
+      "t.LastObservedStatesEntry\0329\n\027LastObserve" +
+      "dStatesEntry\022\013\n\003key\030\001 \001(\005\022\r\n\005value\030\002 \001(\005" +
+      ":\0028\001\"\262\001\n\022StateTransferReply\022\020\n\010serverId\030" +
+      "\001 \001(\t\022@\n\017accounts_states\030\002 \003(\0132\'.StateTr" +
+      "ansferReply.AccountsStatesEntry\032H\n\023Accou" +
+      "ntsStatesEntry\022\013\n\003key\030\001 \001(\005\022 \n\005value\030\002 \001" +
+      "(\0132\021.AccountStatement:\0028\001\"_\n\025MergeProtoc" +
+      "olProposal\022\020\n\010serverId\030\001 \001(\t\022\032\n\022n_applie" +
+      "d_messages\030\002 \001(\005\022\030\n\020n_known_messages\030\003 \001" +
+      "(\005\"\224\004\n\tOperation\022\023\n\013operationId\030\001 \001(\005\022\034\n" +
+      "\004type\030\002 \001(\0162\016.OperationType\022\027\n\naccount_i" +
+      "d\030\003 \001(\005H\000\210\001\001\022*\n\roperationInfo\030\004 \001(\0132\016.Ba" +
+      "nkOperationH\001\210\001\001\022*\n\rmoneyTransfer\030\005 \001(\0132" +
+      "\016.MoneyTransferH\002\210\001\001\022&\n\013stateUpdate\030\006 \001(" +
+      "\0132\014.StateUpdateH\003\210\001\001\0228\n\024stateTransferReq" +
+      "uest\030\007 \001(\0132\025.StateTransferRequestH\004\210\001\001\0226" +
+      "\n\024state_transfer_reply\030\010 \001(\0132\023.StateTran" +
+      "sferReplyH\005\210\001\001\022:\n\025mergeProtocolProposal\030" +
+      "\t \001(\0132\026.MergeProtocolProposalH\006\210\001\001B\r\n\013_a" +
+      "ccount_idB\020\n\016_operationInfoB\020\n\016_moneyTra" +
+      "nsferB\016\n\014_stateUpdateB\027\n\025_stateTransferR" +
+      "equestB\027\n\025_state_transfer_replyB\030\n\026_merg" +
+      "eProtocolProposal\"\362\001\n\016OperationReply\022\023\n\013" +
+      "operationId\030\001 \001(\005\022\034\n\004type\030\002 \001(\0162\016.Operat" +
+      "ionType\022\027\n\naccount_id\030\003 \001(\005H\000\210\001\001\022\023\n\006resu" +
+      "lt\030\004 \001(\010H\001\210\001\001\022\022\n\005value\030\005 \001(\005H\002\210\001\001\0221\n\021acc" +
+      "ount_statement\030\006 \001(\0132\021.AccountStatementH" +
+      "\003\210\001\001B\r\n\013_account_idB\t\n\007_resultB\010\n\006_value" +
+      "B\024\n\022_account_statement*\311\001\n\rOperationType" +
+      "\022\013\n\007BALANCE\020\000\022\014\n\010MOVEMENT\020\001\022\014\n\010TRANSFER\020" +
+      "\002\022\025\n\021ACCOUNT_STATEMENT\020\003\022\023\n\017INTEREST_CRE" +
+      "DIT\020\004\022\020\n\014STATE_UPDATE\020\005\022\032\n\026STATE_TRANSFE" +
+      "R_REQUEST\020\006\022\030\n\024STATE_TRANSFER_REPLY\020\007\022\033\n" +
+      "\027MERGE_PROTOCOL_PROPOSAL\020\010*`\n\017StateUpdat" +
+      "eType\022\026\n\022TRANSFER_OPERATION\020\000\022\026\n\022MOVEMEN" +
+      "T_OPERATION\020\001\022\035\n\031INTEREST_CREDIT_OPERATI" +
+      "ON\020\002*A\n\030StateTransferRequestType\022\016\n\nFULL" +
+      "_STATE\020\000\022\025\n\021INCREMENTAL_STATE\020\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -9801,38 +11533,56 @@ public final class Protocol {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_AccountStatement_descriptor,
         new java.lang.String[] { "Movements", });
-    internal_static_StateTransfer_descriptor =
+    internal_static_StateUpdate_descriptor =
       getDescriptor().getMessageTypes().get(4);
-    internal_static_StateTransfer_fieldAccessorTable = new
+    internal_static_StateUpdate_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_StateTransfer_descriptor,
+        internal_static_StateUpdate_descriptor,
         new java.lang.String[] { "StateTransferId", "Type", "StateInfo", "AccountId", "Transfer", "AppliedCreditAccounts", "AccountId", "Transfer", });
-    internal_static_StateTransfer_AppliedCreditAccountsEntry_descriptor =
-      internal_static_StateTransfer_descriptor.getNestedTypes().get(0);
-    internal_static_StateTransfer_AppliedCreditAccountsEntry_fieldAccessorTable = new
+    internal_static_StateUpdate_AppliedCreditAccountsEntry_descriptor =
+      internal_static_StateUpdate_descriptor.getNestedTypes().get(0);
+    internal_static_StateUpdate_AppliedCreditAccountsEntry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_StateTransfer_AppliedCreditAccountsEntry_descriptor,
+        internal_static_StateUpdate_AppliedCreditAccountsEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_StateTransferRequest_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_StateTransferRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_StateTransferRequest_descriptor,
-        new java.lang.String[] { "StateTransferId", "Type", "LastObservedState", "LastObservedState", });
-    internal_static_MergeProtocolProposal_descriptor =
+        new java.lang.String[] { "ServerId", "Type", "LastObservedStates", });
+    internal_static_StateTransferRequest_LastObservedStatesEntry_descriptor =
+      internal_static_StateTransferRequest_descriptor.getNestedTypes().get(0);
+    internal_static_StateTransferRequest_LastObservedStatesEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_StateTransferRequest_LastObservedStatesEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_StateTransferReply_descriptor =
       getDescriptor().getMessageTypes().get(6);
+    internal_static_StateTransferReply_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_StateTransferReply_descriptor,
+        new java.lang.String[] { "ServerId", "AccountsStates", });
+    internal_static_StateTransferReply_AccountsStatesEntry_descriptor =
+      internal_static_StateTransferReply_descriptor.getNestedTypes().get(0);
+    internal_static_StateTransferReply_AccountsStatesEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_StateTransferReply_AccountsStatesEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
+    internal_static_MergeProtocolProposal_descriptor =
+      getDescriptor().getMessageTypes().get(7);
     internal_static_MergeProtocolProposal_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_MergeProtocolProposal_descriptor,
         new java.lang.String[] { "ServerId", "NAppliedMessages", "NKnownMessages", });
     internal_static_Operation_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_Operation_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Operation_descriptor,
-        new java.lang.String[] { "OperationId", "Type", "AccountId", "OperationInfo", "MoneyTransfer", "StateTransfer", "MergeProtocolProposal", "AccountId", "OperationInfo", "MoneyTransfer", "StateTransfer", "MergeProtocolProposal", });
+        new java.lang.String[] { "OperationId", "Type", "AccountId", "OperationInfo", "MoneyTransfer", "StateUpdate", "StateTransferRequest", "StateTransferReply", "MergeProtocolProposal", "AccountId", "OperationInfo", "MoneyTransfer", "StateUpdate", "StateTransferRequest", "StateTransferReply", "MergeProtocolProposal", });
     internal_static_OperationReply_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_OperationReply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_OperationReply_descriptor,
