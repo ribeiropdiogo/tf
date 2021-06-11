@@ -2,7 +2,9 @@ import com.google.protobuf.Timestamp;
 import protocol.Protocol;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProtocolUtil {
@@ -35,26 +37,26 @@ public class ProtocolUtil {
         );
     }
 
-    public static Protocol.StateTransfer createStateTransferFromMovementOperation(
+    public static Protocol.StateUpdate createStateUpdateFromMovementOperation(
             String stateTransferId, int accountId, MovementInfo movementInfo
     ){
 
-        return Protocol.StateTransfer.newBuilder()
+        return Protocol.StateUpdate.newBuilder()
                 .setStateTransferId(stateTransferId)
-                .setType(Protocol.StateTransferType.MOVEMENT_OPERATION)
+                .setType(Protocol.StateUpdateType.MOVEMENT_OPERATION)
                 .setAccountId(accountId)
                 .addStateInfo(convertMovementInfoToProtocol(movementInfo))
                 .build();
     }
 
-    public static Protocol.StateTransfer createStateTransferFromTransferOperation(
+    public static Protocol.StateUpdate createStateUpdateFromTransferOperation(
             String stateTransferId, int withdrawAccId, MovementInfo withdrawAccountMovInfo,
             int depositAccId, MovementInfo depositAccountMovInfo
     ){
 
-        return Protocol.StateTransfer.newBuilder()
+        return Protocol.StateUpdate.newBuilder()
                 .setStateTransferId(stateTransferId)
-                .setType(Protocol.StateTransferType.TRANSFER_OPERATION)
+                .setType(Protocol.StateUpdateType.TRANSFER_OPERATION)
                 .setTransfer(Protocol.MoneyTransfer.newBuilder()
                         .setAccountWithdraw(withdrawAccId)
                         .setAccountDeposit(depositAccId)
@@ -65,7 +67,7 @@ public class ProtocolUtil {
                 .build();
     }
 
-    public static Protocol.StateTransfer createStateTransferFromInterestCreditOperation(
+    public static Protocol.StateUpdate createStateUpdateFromInterestCreditOperation(
             String stateTransferId, Map<Integer, MovementInfo> appliedCreditAccounts){
 
         Map<Integer, Protocol.MovementInfo> appliedCreditAccountsProtocol = new HashMap<>();
@@ -73,10 +75,20 @@ public class ProtocolUtil {
         // Populate map
         appliedCreditAccounts.forEach((k, v) -> appliedCreditAccountsProtocol.put(k, convertMovementInfoToProtocol(v)));
 
-        return Protocol.StateTransfer.newBuilder()
+        return Protocol.StateUpdate.newBuilder()
                 .setStateTransferId(stateTransferId)
-                .setType(Protocol.StateTransferType.INTEREST_CREDIT_OPERATION)
+                .setType(Protocol.StateUpdateType.INTEREST_CREDIT_OPERATION)
                 .putAllAppliedCreditAccounts(appliedCreditAccountsProtocol)
                 .build();
+    }
+
+    public static Protocol.AccountStatement convertAccountStatementToProtocol(AccountStatement accountStatement){
+        List<Protocol.MovementInfo> listMov = new ArrayList<>();
+
+        for (MovementInfo m : accountStatement.getMovements()) {
+            listMov.add(convertMovementInfoToProtocol(m));
+        }
+
+        return Protocol.AccountStatement.newBuilder().addAllMovements(listMov).build();
     }
 }

@@ -68,6 +68,10 @@ public class Account {
         }
     }
 
+    /**
+     * Returns the last account statement, the account statement only stores the last 10 movements.
+     * @return The accounts statement
+     */
     public AccountStatement getAccountStatement(){
         List<MovementInfo> movementInfoList = this.statement.getMovements();
         AccountStatement newAccountStatement = new AccountStatement();
@@ -82,6 +86,27 @@ public class Account {
         return newAccountStatement;
     }
 
+    /**
+     * Method that returns partial account statement given the last observed movement id.
+     * @param movementId The last observed movement id
+     * @return
+     */
+    public AccountStatement getPartialAccountStatement(int movementId){
+        List<MovementInfo> movementInfoList = this.statement.getMovements();
+        AccountStatement newAccountStatement = new AccountStatement();
+
+        int startIndex = 10 - this.lastMovementId - movementId;
+
+        for (;startIndex<movementInfoList.size();startIndex++){
+            MovementInfo movementInfo = movementInfoList.get(startIndex);
+            MovementInfo newMovementInfo = new MovementInfo(
+                    movementInfo.getValue(), movementInfo.getDescription(), movementInfo.getTimestamp(), movementInfo.getBalanceAfter()
+            );
+            newAccountStatement.addMovement(newMovementInfo);
+        }
+        return newAccountStatement;
+    }
+
     public void addMovementInfo(MovementInfo movementInfo){
         this.statement.addMovement(movementInfo);
     }
@@ -89,6 +114,8 @@ public class Account {
     public int getId(){
         return id;
     }
+
+    public int getLastMovementId(){return lastMovementId; }
 
     public void setBalance(int balance) {
         this.balance = balance;
