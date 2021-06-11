@@ -14,7 +14,7 @@ enum OperationType {
   INTEREST_CREDIT = 4;
 
   // GROUP COMMUNICATION OPERATIONS
-  STATE_TRANSFER = 5;
+  STATE_UPDATE = 5;
   STATE_TRANSFER_REQUEST = 6;
   STATE_TRANSFER_REPLY = 7;
   MERGE_PROTOCOL_PROPOSAL = 8;
@@ -46,18 +46,18 @@ message AccountStatement {
   repeated MovementInfo movements = 1;
 }
 
-enum StateTransferType {
-
-  // STATE TRANSFER POSSIBLE TYPES
+// Represents the possible types of state update message
+enum StateUpdateType {
+  // UPDATE STATE POSSIBLE TYPES
   TRANSFER_OPERATION = 0;
   MOVEMENT_OPERATION = 1;
   INTEREST_CREDIT_OPERATION = 2;
 }
 
 // Message that represents a state transfer
-message StateTransfer {
+message StateUpdate {
   string stateTransferId = 1;
-  StateTransferType type = 2;
+  StateUpdateType type = 2;
   repeated MovementInfo stateInfo = 3;
 
   // Represents a single account id, useful for movement operation
@@ -70,17 +70,26 @@ message StateTransfer {
   map<int32, MovementInfo> appliedCreditAccounts = 6;
 }
 
+// Represents the type of the state transfer request, or full state in case of poisoned state
+// or incremental
 enum StateTransferRequestType {
   // IN CASE OF TRANSITIONAL VIEW OR POISONED STATE
   FULL_STATE = 0;         // Poisoned state, requires full transfer
   INCREMENTAL_STATE = 1;  // Incremental state, only the needed messages
 }
 
+// Message that represents a state transfer request, has the server id of who requested and a map
+// that for each account indicates which was the last observed state
 message StateTransferRequest {
   string serverId = 1;
   StateTransferRequestType type = 2;
-  // How to request for state? Give a number and server send us last state
-  map<int32,int32> last_observed_states = 3;
+  map<int32, int32> last_observed_states = 3; // Account to last observed state
+}
+
+// Message that represents a state transfer reply from the leader to the person who requested it
+message StateTransferReply {
+  string serverId = 1;
+  map<int32, AccountStatement> accounts_states = 2;
 }
 
 // Message that represents a merge protocol proposal
@@ -99,13 +108,14 @@ message Operation {
   optional BankOperation operationInfo = 4; // Information about the operation
   optional MoneyTransfer moneyTransfer = 5; // Money transfer operation
 
-  // State transfer
-  optional StateTransfer stateTransfer = 6;
+  // Update State
+  optional StateUpdate stateUpdate = 6;
 
+  // Request for state
   optional StateTransferRequest stateTransferRequest = 7;
 
+  // Reply from the leader with the requested state
   optional StateTransferReply  state_transfer_reply = 8;
-
 
   // Merge protocol proposal
   optional  MergeProtocolProposal mergeProtocolProposal = 9;
@@ -123,9 +133,4 @@ message OperationReply {
   optional int32 value = 5;
 
   optional AccountStatement account_statement = 6;
-}
-
-message StateTransferReply {
-  string serverId = 1;
-  map<int32, AccountStatement> accounts_states = 2;
 }

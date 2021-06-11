@@ -139,16 +139,28 @@ public class Bank implements BankInterface{
         this.accounts.replace(accountId, account);
     }
 
-    public boolean validateTransferState(int accountId, int lastMovement) {
+    /**
+     * Method that given a account id and a int that represents the last observed movement
+     * in that account returns if its possible to transfer some missing state about that account.
+     * @param accountId The account id to verify if some state is missing
+     * @param lastObservedMovement The last observed state
+     * @return Returns true if some state is missing, false if not
+     */
+    public boolean isMissingPartialState(int accountId, int lastObservedMovement) {
         Account account = this.accounts.get(accountId);
-        boolean reply = false;
+        boolean reply;
         account.lock();
-        reply = (account.getLastMovementId() - lastMovement <= 10);
+        reply = (account.getLastMovementId() - lastObservedMovement <= 10);
         account.unlock();
         return reply;
     }
 
-    public Map<Integer, Integer> getAllLastMovements() {
+    /**
+     * Method that returns a map that for each key has as value the last observed state in that
+     * account
+     * @return Returns the last observed state for each account
+     */
+    public Map<Integer, Integer> getAccountsLastObservedState() {
         Map <Integer, Integer> reply = new HashMap<>();
         for(Account a : accounts.values()) {
             a.lock();
@@ -158,33 +170,52 @@ public class Bank implements BankInterface{
         return reply;
     }
 
+    /**
+     * Method to obtain all bank state.
+     * @return Returns all bank state
+     */
     public Map<Integer, AccountStatement> getBankState(){
-        Map <Integer, AccountStatement> reply = new HashMap<>();
+        Map <Integer, AccountStatement> bankState = new HashMap<>();
         for(Account a : accounts.values()) {
             a.lock();
-            reply.put(a.getId(), a.getAccountStatement());
+            bankState.put(a.getId(), a.getAccountStatement());
             a.unlock();
         }
-        return reply;
+        return bankState;
     }
 
-    public Map<Integer, AccountStatement> getBankPartialState(Map<Integer, Integer> lastMovements) {
-        Map <Integer, AccountStatement> reply = new HashMap<>();
-        for(int accountId : lastMovements.keySet()) {
-            if (validateTransferState(accountId,lastMovements.get(accountId)))
-            {
+    /**
+     * Method to get partial state of the bank given a map that has as key the account id and as value
+     * the last observed state in that account.
+     * @param observedBankState The received observed bank state
+     * @return Returns the bank state of the required accounts
+     */
+    public Map<Integer, AccountStatement> getBankPartialState(Map<Integer, Integer> observedBankState) {
+        Map <Integer, AccountStatement> bankPartialState = new HashMap<>();
+
+        for(int accountId : observedBankState.keySet()) {
+
+            int lastObservedState = observedBankState.get(accountId);
+
+            // If only some messages are missing
+            if (isMissingPartialState(accountId, lastObservedState)) {
                 Account a = accounts.get(accountId);
                 a.lock();
-                reply.put(accountId,a.getPartialAccountStatement(lastMovements.get(accountId)));
+                bankPartialState.put(
+                        accountId, a.getPartialAccountStatement(lastObservedState)
+                );
                 a.unlock();
             }
+            // If all messages are missing
             else {
                 Account a = accounts.get(accountId);
                 a.lock();
-                reply.put(accountId,a.getAccountStatement());
+                bankPartialState.put(
+                        accountId, a.getAccountStatement()
+                );
                 a.unlock();
             }
         }
-        return reply;
+        return bankPartialState;
     }
 }
