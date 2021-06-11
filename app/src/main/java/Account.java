@@ -95,7 +95,7 @@ public class Account {
         List<MovementInfo> movementInfoList = this.statement.getMovements();
         AccountStatement newAccountStatement = new AccountStatement();
 
-        int startIndex = 10 - this.lastMovementId - movementId;
+        int startIndex = this.lastMovementId - movementId - 1;
 
         for (;startIndex<movementInfoList.size();startIndex++){
             MovementInfo movementInfo = movementInfoList.get(startIndex);
