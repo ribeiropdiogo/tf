@@ -2,7 +2,6 @@ import io.atomix.utils.net.Address;
 import protocol.Protocol;
 import protocol.Protocol.*;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -19,16 +18,20 @@ public class Stub implements StubBankInterface{
     private CompletableFuture<AccountStatement> accountStatementRequest;
     private CompletableFuture<Void> interestCreditRequest;
 
+    private final int TIMEOUT;
 
-    private static final int TIMEOUT = 5;
+    private final boolean IS_BENCHMARK;
 
     private Integer lastRequestId;
 
-    public Stub(int clientPort) throws ExecutionException, InterruptedException {
+    public Stub(int clientPort, int timeout, boolean isBenchmark) throws ExecutionException, InterruptedException {
 
         network = new Network(clientPort);
 
         this.lastRequestId = 0;
+
+        this.TIMEOUT = timeout;
+        this.IS_BENCHMARK = isBenchmark;
 
         start();
     }
@@ -40,35 +43,44 @@ public class Stub implements StubBankInterface{
 
         network.start();
 
-        System.out.println("> Client started!");
+        if (!IS_BENCHMARK)
+            System.out.println("> Client started!");
     }
 
     private void registerHandlers(){
         // Balance Response Handler
         network.registerReplyHandler("balance-response", (address, response) -> {
-            System.out.println("> Received Reply from BALANCE Operation on the Account: " + response.getAccountId() +
-                    " with Operation Id: "+ response.getOperationId() + ".\n\t- Value: -> " + response.getValue());
+            if (!IS_BENCHMARK) {
+                System.out.println("> Received Reply from BALANCE Operation on the Account: " + response.getAccountId() +
+                        " with Operation Id: " + response.getOperationId() + ".\n\t- Value: -> " + response.getValue());
+            }
             this.balanceRequest.complete(response.getValue());
         });
 
         // Movement Response Handler
         network.registerReplyHandler("movement-response", ((address, response) -> {
-            System.out.println("> Received Reply from MOVEMENT Operation on the Account: " + response.getAccountId() +
-                    " with Operation Id: "+ response.getOperationId() + ".\n\t- Result: -> " + response.getResult());
+            if (!IS_BENCHMARK) {
+                System.out.println("> Received Reply from MOVEMENT Operation on the Account: " + response.getAccountId() +
+                        " with Operation Id: "+ response.getOperationId() + ".\n\t- Result: -> " + response.getResult());
+            }
             this.movementRequest.complete(response.getResult());
         }));
 
         // Transfer Response Handler
         network.registerReplyHandler("transfer-response", ((address, response) -> {
-            System.out.println("> Received Reply from TRANSFER Operation with Operation Id: "
-                    + response.getOperationId() + ".\n\t- Result: -> " + response.getResult());
+            if (!IS_BENCHMARK) {
+                System.out.println("> Received Reply from TRANSFER Operation with Operation Id: "
+                        + response.getOperationId() + ".\n\t- Result: -> " + response.getResult());
+            }
             this.transferRequest.complete(response.getResult());
         }));
 
         // Account Statement Response Handler
         network.registerReplyHandler("account-statement-response", ((address, response) -> {
-            System.out.println("> Received Reply from ACCOUNT STATEMENT Operation on the Account: " + response.getAccountId()
-                    + " with Operation Id: "+ response.getOperationId());
+            if (!IS_BENCHMARK){
+                System.out.println("> Received Reply from ACCOUNT STATEMENT Operation on the Account: " + response.getAccountId()
+                        + " with Operation Id: "+ response.getOperationId());
+            }
 
             Protocol.AccountStatement accountStatementProtocolMessage = response.getAccountStatement();
             List<Protocol.MovementInfo> movementInfoListProtocolMessage = accountStatementProtocolMessage.getMovementsList();
@@ -86,8 +98,10 @@ public class Stub implements StubBankInterface{
 
         // Interest Credit Response Handler
         network.registerReplyHandler("interest-credit-response", ((address, response) -> {
-            System.out.println("> Received Reply from INTEREST CREDIT Operation with Operation Id: "
-                    + response.getOperationId());
+            if (!IS_BENCHMARK){
+                System.out.println("> Received Reply from INTEREST CREDIT Operation with Operation Id: "
+                        + response.getOperationId());
+            }
             this.interestCreditRequest.complete(null);
         }));
     }
@@ -105,8 +119,10 @@ public class Stub implements StubBankInterface{
         // Send balance operation for the server
         network.send(Address.from(MainServerInfo.SERVER_PORT), "balance-request", operation)
                 .thenRun(() -> {
-                    System.out.println("> Balance operation on the account " + accountId + " with id "
-                            + lastRequestId + " sent to the server.");
+                    if (!IS_BENCHMARK){
+                        System.out.println("> Balance operation on the account " + accountId + " with id "
+                                + lastRequestId + " sent to the server.");
+                    }
                     lastRequestId++;
                 })
                 .exceptionally(e -> {
@@ -142,10 +158,12 @@ public class Stub implements StubBankInterface{
         // Send the movement operation to the server
         network.send(Address.from(MainServerInfo.SERVER_PORT), "movement-request", operation)
                 .thenRun(() -> {
-                    System.out.println("> Movement operation on the account " + accountId + " with id "
-                            + lastRequestId + " sent to server."
-                            + "\n\t- Movement Value: " + value
-                            + "\n\t- Movement Description: " + description);
+                    if (!IS_BENCHMARK){
+                        System.out.println("> Movement operation on the account " + accountId + " with id "
+                                + lastRequestId + " sent to server."
+                                + "\n\t- Movement Value: " + value
+                                + "\n\t- Movement Description: " + description);
+                    }
                     lastRequestId++;
                 })
                 .exceptionally(e -> {
@@ -189,11 +207,13 @@ public class Stub implements StubBankInterface{
         // Send the transfer operation to the server
         network.send(Address.from(MainServerInfo.SERVER_PORT), "transfer-request", operation)
                 .thenRun(() -> {
-                    System.out.println("> Transfer operation between withdraw account " + withdrawAccountId
-                            + " and deposit account " + depositAccountId + " with id "
-                            + lastRequestId + " sent to server. "
-                            + "\n\t- Movement Value: " + value
-                            + "\n\t- Movement Description: " + description);
+                    if (!IS_BENCHMARK){
+                        System.out.println("> Transfer operation between withdraw account " + withdrawAccountId
+                                + " and deposit account " + depositAccountId + " with id "
+                                + lastRequestId + " sent to server. "
+                                + "\n\t- Movement Value: " + value
+                                + "\n\t- Movement Description: " + description);
+                    }
                     lastRequestId++;
                 })
                 .exceptionally(e -> {
@@ -223,8 +243,10 @@ public class Stub implements StubBankInterface{
         // Send account statement operation for the server
         network.send(Address.from(MainServerInfo.SERVER_PORT), "account-statement-request", operation)
                 .thenRun(() -> {
-                    System.out.println("> Account Statement operation on the account " + accountId + " with id "
-                            + lastRequestId + " sent to the server.");
+                    if (!IS_BENCHMARK){
+                        System.out.println("> Account Statement operation on the account " + accountId + " with id "
+                                + lastRequestId + " sent to the server.");
+                    }
                     lastRequestId++;
                 })
                 .exceptionally(e -> {
@@ -253,7 +275,9 @@ public class Stub implements StubBankInterface{
         // Send interest credit operation for the server
         network.send(Address.from(MainServerInfo.SERVER_PORT), "interest-credit-request", operation)
                 .thenRun(() -> {
-                    System.out.println("> Interest Credit operation with id " + lastRequestId + " sent to the server.");
+                    if (!IS_BENCHMARK){
+                        System.out.println("> Interest Credit operation with id " + lastRequestId + " sent to the server.");
+                    }
                     lastRequestId++;
                 })
                 .exceptionally(e -> {

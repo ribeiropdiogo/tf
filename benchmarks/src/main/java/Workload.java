@@ -1,26 +1,23 @@
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-// TODO
 public class Workload {
 
-    private static final int NR_REQUESTS = 1000;
+    private final int NR_REQUESTS;
 
-    // Client Stub
+    // Benchmark Stub
     private final Stub stub;
     private final Random rand;
 
-    public Workload(int port, Random rand) throws ExecutionException, InterruptedException {
-        this.stub = new Stub(port);
+    public Workload(int port, int nr_requests, Random rand) throws ExecutionException, InterruptedException {
+        this.stub = new Stub(port, 20, true);
+        this.NR_REQUESTS = nr_requests;
         this.rand = rand;
     }
 
-    public void start() throws IOException, ExecutionException, InterruptedException, TimeoutException {
+    public void start() throws ExecutionException, InterruptedException, TimeoutException {
 
         Date d1 = new Date();
 
@@ -33,18 +30,18 @@ public class Workload {
             switch (rand.nextInt(6)){
                 // Deposit operation
                 case 0:
-                    boolean depositResult = stub.movement(rand_account,value,"benchmark");
+                    stub.movement(rand_account,value,"benchmark");
                     break;
                 // Withdraw operation
                 case 1:
-                    boolean withdrawResult = stub.movement(rand_account,-value,"benchmark");
+                    stub.movement(rand_account,-value,"benchmark");
                     break;
                 case 2:
-                    int balance = stub.balance(rand_account);
+                    stub.balance(rand_account);
                     break;
                 case 3:
                     int rand_dest = 1 + rand.nextInt((5 - 1) + 1);
-                    boolean transferResult = stub.transfer(rand_account,rand_dest,value,"benchmark");
+                    stub.transfer(rand_account,rand_dest,value,"benchmark");
                     break;
                 case 4:
                     stub.interestCredit();

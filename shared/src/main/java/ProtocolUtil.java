@@ -91,4 +91,14 @@ public class ProtocolUtil {
 
         return Protocol.AccountStatement.newBuilder().addAllMovements(listMov).build();
     }
+
+    public static Map<Integer, Protocol.AccountStatement> convertBankStateToProtocol(Map<Integer, AccountStatement> bankState){
+        //Convert Into Protocol message
+        Map<Integer, Protocol.AccountStatement> protocolBankState = new HashMap<>();
+
+        for (Map.Entry<Integer, AccountStatement> e : bankState.entrySet()) {
+            protocolBankState.put(e.getKey(), ProtocolUtil.convertAccountStatementToProtocol(e.getValue()));
+        }
+        return protocolBankState;
+    }
 }

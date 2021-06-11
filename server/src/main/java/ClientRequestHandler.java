@@ -13,6 +13,7 @@ public class ClientRequestHandler {
 
     private final ReplicationHandler replicationHandler;
 
+    // Concurrency control
     private final OperationConcurrencyControl concurrencyControl;
 
     private Network network = null;
@@ -127,7 +128,7 @@ public class ClientRequestHandler {
             MovementInfo movementInfo = opResult.getRight();
             replicationHandler.updateReplicasState(
                     stateTransferId,
-                    ProtocolUtil.createStateTransferFromMovementOperation(stateTransferId, accountId, movementInfo),
+                    ProtocolUtil.createStateUpdateFromMovementOperation(stateTransferId, accountId, movementInfo),
                     clientResponse
             );
 
@@ -207,7 +208,7 @@ public class ClientRequestHandler {
             MovementInfo depositMovementInfo = opResult.getRight();
             replicationHandler.updateReplicasState(
                     stateTransferId,
-                    ProtocolUtil.createStateTransferFromTransferOperation(
+                    ProtocolUtil.createStateUpdateFromTransferOperation(
                             stateTransferId, withdrawAccountId, withdrawMovementInfo, depositAccountId, depositMovementInfo
                     ),
                     clientResponse
@@ -340,7 +341,7 @@ public class ClientRequestHandler {
             String stateTransferId = UUID.randomUUID().toString();
             replicationHandler.updateReplicasState(
                     stateTransferId,
-                    ProtocolUtil.createStateTransferFromInterestCreditOperation(
+                    ProtocolUtil.createStateUpdateFromInterestCreditOperation(
                             stateTransferId, appliedCreditAccounts
                     ),
                     clientResponse

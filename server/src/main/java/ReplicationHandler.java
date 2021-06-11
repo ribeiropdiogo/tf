@@ -15,14 +15,12 @@ public class ReplicationHandler {
 
     private boolean IS_LEADER = false;
 
-    // Messages waiting to be processed and to send to the client
-    // private final List<Message> pendingMessages;
+    // Merge protocol section
+    private final int MAJORITY;
 
     private int NR_APPLIED_MESSAGES = 0;
 
     private int NR_KNOWN_MESSAGES = 0;
-
-    private final int MAJORITY;
 
     private boolean MERGE_PROTOCOL_RUNNING = false;
 
@@ -37,8 +35,11 @@ public class ReplicationHandler {
 
     private final List<Protocol.Operation> knownMessagesList;
 
+    // Map that contains the state update request id as key and value the client request,
+    // when I (leader) receive the safe message back can complete the client request and remove it
     private final Map<String, CompletableFuture<Void>> clientsRequests;
 
+    // Handler for client's request via tcp socket
     private final ClientRequestHandler clientRequestHandler;
 
     public ReplicationHandler(Bank bank, String serverId, NetworkGroup network, int majority) {
@@ -56,263 +57,12 @@ public class ReplicationHandler {
 
     public void addListeners(){
         networkGroup.addAdvancedListener(new AdvancedMessageListener() {
-
             @Override
             public void regularMessageReceived(SpreadMessage spreadMessage) {
                 try {
                     Protocol.Operation operation = Protocol.Operation.parseFrom(spreadMessage.getData());
-
-                    switch (operation.getType()){
-                        case STATE_UPDATE:
-                            // If I am the leader and I received my SAFE message back then all other members
-                            // of the group received the message if I am not in a transitional view
-                            if (IS_LEADER){
-                                // If the merge protocol is running save the received message to be handled later
-                                // when a leader is determined
-                                if (MERGE_PROTOCOL_RUNNING){
-                                    // Increment the number of known messages
-                                    NR_KNOWN_MESSAGES++;
-
-                                    // Add the STATE UPDATE operation to be replayed later
-                                    knownMessagesList.add(operation);
-                                }else {
-                                    // If I am currently in a transitional view store all messages to be replayed
-                                    // later when I am the leader
-                                    if (IS_IN_TRANSITIONAL_VIEW){
-                                        System.out.println(Colors.ANSI_PURPLE + "> Received my SAFE message back, in a transitional view." +
-                                                " Saving this message to be replayed later." + Colors.ANSI_RESET);
-
-                                        // Increment the number of known messages
-                                        NR_KNOWN_MESSAGES++;
-
-                                        // Add the STATE UPDATE operation to be replayed later
-                                        knownMessagesList.add(operation);
-                                    } else {
-                                        System.out.println(Colors.ANSI_BLUE + "> Received my SAFE message back, can complete the client request." + Colors.ANSI_RESET);
-
-                                        // Increment the number of applied messages
-                                        NR_APPLIED_MESSAGES++;
-
-                                        // Complete the client request
-                                        clientsRequests.get(operation.getStateUpdate().getStateTransferId()).complete(null);
-                                        clientsRequests.remove(operation.getStateUpdate().getStateTransferId());
-                                    }
-                                }
-                            }else {
-                                switch (operation.getStateUpdate().getType()){
-                                    case MOVEMENT_OPERATION:
-                                        System.out.println("> Received a STATE UPDATE about a MOVEMENT Operation on the " +
-                                                "account " + operation.getStateUpdate().getAccountId() + ".");
-                                        MovementInfo movementInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
-                                                operation.getStateUpdate().getStateInfo(0)
-                                        );
-                                        // Update the state of the account
-                                        bank.updateAccountState(operation.getStateUpdate().getAccountId(), movementInfo);
-                                        break;
-                                    case TRANSFER_OPERATION:
-                                        int withdrawAccId = operation.getStateUpdate().getTransfer().getAccountWithdraw();
-                                        int depositAccId = operation.getStateUpdate().getTransfer().getAccountDeposit();
-                                        System.out.println("> Received a STATE UPDATE about a TRANSFER Operation between " +
-                                                "withdraw account " + withdrawAccId  + " and deposit account " +  depositAccId + ".");
-                                        MovementInfo withdrawAccInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
-                                                operation.getStateUpdate().getStateInfo(0)
-                                        );
-                                        MovementInfo depositAccInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
-                                                operation.getStateUpdate().getStateInfo(1)
-                                        );
-                                        // Update the state of the accounts
-                                        bank.updateAccountState(withdrawAccId, withdrawAccInfo);
-                                        bank.updateAccountState(depositAccId, depositAccInfo);
-                                        break;
-                                    case INTEREST_CREDIT_OPERATION:
-                                        Map<Integer, Protocol.MovementInfo> appliedCreditAccounts = operation.getStateUpdate().getAppliedCreditAccountsMap();
-                                        Set<Integer> accountIds = appliedCreditAccounts.keySet();
-                                        System.out.println("> Received a STATE UPDATE about a INTEREST CREDIT Operation on" +
-                                                " a number of " + accountIds.size() + " accounts.");
-
-                                        // Update the state of all the accounts that were modified
-                                        for(Integer accountId : accountIds){
-                                            MovementInfo movementInfoAcc = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
-                                                    appliedCreditAccounts.get(accountId)
-                                            );
-                                            // Update this account state
-                                            bank.updateAccountState(accountId, movementInfoAcc);
-                                        }
-                                        break;
-                                }
-
-                                // Increment the number of applied messages
-                                NR_APPLIED_MESSAGES++;
-                            }
-                            break;
-                        case MERGE_PROTOCOL_PROPOSAL:
-                            System.out.println("> Received a MERGE PROTOCOL PROPOSAL from Server: "
-                                    + operation.getMergeProtocolProposal().getServerId() + " with a Nr of Applied"
-                                    + " Messages: " + operation.getMergeProtocolProposal().getNAppliedMessages() + " and"
-                                    + " a Nr of Known Messages: " + operation.getMergeProtocolProposal().getNKnownMessages());
-
-                            MergeProtocolProposal mergeProtocolProposal =
-                                    new MergeProtocolProposal(
-                                            operation.getMergeProtocolProposal().getServerId(),
-                                            operation.getMergeProtocolProposal().getNAppliedMessages(),
-                                            operation.getMergeProtocolProposal().getNKnownMessages());
-
-                            // Add the received proposal to the merge protocol
-                            mergeProtocol.addProposal(mergeProtocolProposal);
-
-                            // After adding the received proposal verify if the merge protocol is complete, if it is
-                            // then we need to verify who is the winner
-                            if (mergeProtocol.isComplete()){
-                                MergeProtocolProposal winner = mergeProtocol.getWinner();
-
-                                // If the winner is me, then open the socket
-                                if (winner.getPROCESS_ID().equals(serverId)){
-
-                                    MERGE_PROTOCOL_RUNNING = false;
-
-                                    if (IS_LEADER){
-                                        System.out.println(Colors.ANSI_BLUE + "> I AM already the LEADER. Not needed "
-                                                + "to open the socket, since it's already open!" + Colors.ANSI_RESET);
-
-                                        //if ()
-                                           // I am going to process "
-                                              //  + " the messages saved during Merge Protocol Execution..."
-                                        // TODO : Replay
-                                    } else {
-                                        System.out.println(Colors.ANSI_GREEN + ">> I AM the LEADER. Opening socket..." + Colors.ANSI_RESET);
-                                        IS_LEADER = true;
-
-                                        // Open the socket since I am the leader
-                                        clientRequestHandler.openSocket();
-                                    }
-                                } else {
-                                    // I applied message
-                                    if (knownMessagesList.size() > 0){
-                                        IS_STATE_POISONED = true;
-                                        // Clear all known messages
-                                        knownMessagesList.clear();
-                                        NR_KNOWN_MESSAGES = 0;
-                                    }
-                                    System.out.println(Colors.ANSI_CYAN + "> I AM NOT the LEADER." + Colors.ANSI_RESET);
-
-                                    Protocol.Operation stateTransferOperation;
-
-                                    if(IS_STATE_POISONED) {
-                                        // request state to leader
-                                        stateTransferOperation = Protocol.Operation.newBuilder()
-                                                .setType(Protocol.OperationType.STATE_TRANSFER_REQUEST)
-                                                .setStateTransferRequest(Protocol.StateTransferRequest.newBuilder()
-                                                        .setServerId(serverId)
-                                                        .setType(Protocol.StateTransferRequestType.FULL_STATE)
-                                                        .build())
-                                                .build();
-                                    }
-                                    else {
-                                        //get All last Movements from all accounts
-                                        Map<Integer, Integer> lastMovements = bank.getAccountsLastObservedState();
-
-                                        // request state to leader
-                                        stateTransferOperation = Protocol.Operation.newBuilder()
-                                                .setType(Protocol.OperationType.STATE_TRANSFER_REQUEST)
-                                                .setStateTransferRequest(Protocol.StateTransferRequest.newBuilder()
-                                                                .setServerId(serverId).putAllLastObservedStates(lastMovements)
-                                                                .setType(Protocol.StateTransferRequestType.INCREMENTAL_STATE)
-                                                        .build())
-                                                .build();
-                                    }
-                                    //Reply
-                                    try {
-                                        networkGroup.sendSafe("server-group", stateTransferOperation);
-
-                                        System.out.println(Colors.ANSI_GREEN + "> STATE TRANSFER from merge protocol." + Colors.ANSI_RESET);
-
-                                    } catch (SpreadException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                            break;
-                        case STATE_TRANSFER_REQUEST:
-                            if(IS_LEADER) {
-                                Protocol.StateTransferRequest stateRequest = operation.getStateTransferRequest();
-                                Protocol.Operation stateOperationReply = null;
-
-                                //Incremental State Request
-                                if (stateRequest.getType() == Protocol.StateTransferRequestType.INCREMENTAL_STATE) {
-
-                                    Map<Integer, AccountStatement> stateTransfer = bank.getBankPartialState(
-                                            stateRequest.getLastObservedStatesMap());
-
-                                    //Convert into Protocol message
-                                    Map<Integer, Protocol.AccountStatement> protocolAccount = new HashMap<>();
-
-                                    for (Map.Entry<Integer, AccountStatement> e : stateTransfer.entrySet()) {
-                                        protocolAccount.put(e.getKey(), ProtocolUtil.convertAccountStatementToProtocol(e.getValue()));
-                                    }
-
-                                    stateOperationReply = Protocol.Operation.newBuilder()
-                                            .setType(Protocol.OperationType.STATE_TRANSFER_REPLY)
-                                            .setStateTransferReply(
-                                                    Protocol.StateTransferReply.newBuilder()
-                                                            .setServerId(stateRequest.getServerId())
-                                                            .putAllAccountsStates(protocolAccount).build())
-                                            .build();
-
-
-
-                                    //Full State Request
-                                } else if (stateRequest.getType() == Protocol.StateTransferRequestType.FULL_STATE) {
-
-                                    Map<Integer, AccountStatement> stateTransfer = bank.getBankState();
-
-                                    //Convert into Protocol message
-                                    Map<Integer, Protocol.AccountStatement> protocolAccount = new HashMap<>();
-
-                                    for (Map.Entry<Integer, AccountStatement> e : stateTransfer.entrySet()) {
-                                        protocolAccount.put(e.getKey(), ProtocolUtil.convertAccountStatementToProtocol(e.getValue()));
-                                    }
-
-                                    stateOperationReply = Protocol.Operation.newBuilder()
-                                            .setType(Protocol.OperationType.STATE_TRANSFER_REPLY)
-                                            .setStateTransferReply(
-                                                    Protocol.StateTransferReply.newBuilder()
-                                                            .setServerId(stateRequest.getServerId())
-                                                            .putAllAccountsStates(protocolAccount).build())
-                                            .build();
-                                }
-                                //Reply
-                                try {
-                                    networkGroup.sendSafe("server-group", stateOperationReply);
-
-                                    System.out.println(Colors.ANSI_GREEN + "> Sent state transfer reply to requester." + Colors.ANSI_RESET);
-
-                                } catch (SpreadException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            break;
-                        case STATE_TRANSFER_REPLY:
-
-                            Protocol.StateTransferReply stateReply = operation.getStateTransferReply();
-
-                            if(stateReply.getServerId().equals(serverId)){
-                                Map<Integer, Protocol.AccountStatement> mapAccountStatement = stateReply.getAccountsStatesMap();
-
-                                for(Map.Entry<Integer, Protocol.AccountStatement> e : mapAccountStatement.entrySet()) {
-                                    for (Protocol.MovementInfo mov : e.getValue().getMovementsList()) {
-                                        bank.updateAccountState(e.getKey(), ProtocolUtil.convertProtocolMovementInfoToMovementInfo(mov));
-                                    }
-                                }
-                                System.out.println(Colors.ANSI_GREEN + "> Received state transfer and already applied" + Colors.ANSI_RESET);
-                            }
-
-
-                          break;
-                        default:
-                            System.err.println("> Unknown operation!");
-                            break;
-                    }
-                }catch (InvalidProtocolBufferException | ExecutionException | InterruptedException e) {
+                    processOperation(operation);
+                } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
                 }
             }
@@ -427,6 +177,280 @@ public class ReplicationHandler {
                 }
             }
         });
+    }
+
+    private void processOperation(Protocol.Operation operation){
+        try {
+            switch (operation.getType()){
+                case STATE_UPDATE:
+                    // If I am the leader and I received my SAFE message back then all other members
+                    // of the group received the message if I am not in a transitional view
+                    if (IS_LEADER){
+                        // If the merge protocol is running save the received message to be handled later
+                        // when a leader is determined
+                        if (MERGE_PROTOCOL_RUNNING){
+                            // Increment the number of known messages
+                            NR_KNOWN_MESSAGES++;
+
+                            // Add the STATE UPDATE operation to be replayed later
+                            knownMessagesList.add(operation);
+                        }else {
+                            // If I am currently in a transitional view store all messages to be replayed
+                            // later when I am the leader
+                            if (IS_IN_TRANSITIONAL_VIEW){
+                                System.out.println(Colors.ANSI_PURPLE + "> Received my SAFE message back, in a transitional view." +
+                                        " Saving this message to be replayed later." + Colors.ANSI_RESET);
+
+                                // Increment the number of known messages
+                                NR_KNOWN_MESSAGES++;
+
+                                // Add the STATE UPDATE operation to be replayed later
+                                knownMessagesList.add(operation);
+                            } else {
+                                System.out.println(Colors.ANSI_BLUE + "> Received my SAFE message back, can complete the client request." + Colors.ANSI_RESET);
+
+                                // Increment the number of applied messages
+                                NR_APPLIED_MESSAGES++;
+
+                                // Complete the client request
+                                clientsRequests.get(operation.getStateUpdate().getStateTransferId()).complete(null);
+                                clientsRequests.remove(operation.getStateUpdate().getStateTransferId());
+                            }
+                        }
+                    }else {
+                        switch (operation.getStateUpdate().getType()){
+                            case MOVEMENT_OPERATION:
+                                System.out.println("> Received a STATE UPDATE about a MOVEMENT Operation on the " +
+                                        "account " + operation.getStateUpdate().getAccountId() + ".");
+                                MovementInfo movementInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
+                                        operation.getStateUpdate().getStateInfo(0)
+                                );
+                                // Update the state of the account
+                                bank.updateAccountState(operation.getStateUpdate().getAccountId(), movementInfo);
+                                break;
+                            case TRANSFER_OPERATION:
+                                int withdrawAccId = operation.getStateUpdate().getTransfer().getAccountWithdraw();
+                                int depositAccId = operation.getStateUpdate().getTransfer().getAccountDeposit();
+                                System.out.println("> Received a STATE UPDATE about a TRANSFER Operation between " +
+                                        "withdraw account " + withdrawAccId  + " and deposit account " +  depositAccId + ".");
+                                MovementInfo withdrawAccInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
+                                        operation.getStateUpdate().getStateInfo(0)
+                                );
+                                MovementInfo depositAccInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
+                                        operation.getStateUpdate().getStateInfo(1)
+                                );
+                                // Update the state of the accounts
+                                bank.updateAccountState(withdrawAccId, withdrawAccInfo);
+                                bank.updateAccountState(depositAccId, depositAccInfo);
+                                break;
+                            case INTEREST_CREDIT_OPERATION:
+                                Map<Integer, Protocol.MovementInfo> appliedCreditAccounts = operation.getStateUpdate().getAppliedCreditAccountsMap();
+                                Set<Integer> accountIds = appliedCreditAccounts.keySet();
+                                System.out.println("> Received a STATE UPDATE about a INTEREST CREDIT Operation on" +
+                                        " a number of " + accountIds.size() + " accounts.");
+
+                                // Update the state of all the accounts that were modified
+                                for(Integer accountId : accountIds){
+                                    MovementInfo movementInfoAcc = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
+                                            appliedCreditAccounts.get(accountId)
+                                    );
+                                    // Update this account state
+                                    bank.updateAccountState(accountId, movementInfoAcc);
+                                }
+                                break;
+                        }
+
+                        // Increment the number of applied messages
+                        NR_APPLIED_MESSAGES++;
+                    }
+                    break;
+                case MERGE_PROTOCOL_PROPOSAL:
+                    System.out.println("> Received a MERGE PROTOCOL PROPOSAL from Server: "
+                            + operation.getMergeProtocolProposal().getServerId() + " with a Nr of Applied"
+                            + " Messages: " + operation.getMergeProtocolProposal().getNAppliedMessages() + " and"
+                            + " a Nr of Known Messages: " + operation.getMergeProtocolProposal().getNKnownMessages());
+
+                    MergeProtocolProposal mergeProtocolProposal =
+                            new MergeProtocolProposal(
+                                    operation.getMergeProtocolProposal().getServerId(),
+                                    operation.getMergeProtocolProposal().getNAppliedMessages(),
+                                    operation.getMergeProtocolProposal().getNKnownMessages());
+
+                    // Add the received proposal to the merge protocol
+                    mergeProtocol.addProposal(mergeProtocolProposal);
+
+                    // After adding the received proposal verify if the merge protocol is complete, if it is
+                    // then we need to verify who is the winner
+                    if (mergeProtocol.isComplete()){
+                        MergeProtocolProposal winner = mergeProtocol.getWinner();
+
+                        // If the winner is me, then open the socket
+                        if (winner.getPROCESS_ID().equals(serverId)){
+
+                            MERGE_PROTOCOL_RUNNING = false;
+
+                            if (IS_LEADER){
+                                System.out.println(Colors.ANSI_BLUE + "> I AM already the LEADER. Not needed "
+                                        + "to open the socket, since it's already open!" + Colors.ANSI_RESET);
+
+                                if (knownMessagesList.size() > 0){
+                                    System.out.println(Colors.ANSI_BLUE + "> I HAVE KNOWN MESSAGES TO PROCESS. "
+                                            + "Initializing REPLAY!" + Colors.ANSI_RESET);
+                                    replay();
+                                }
+                            } else {
+                                System.out.println(Colors.ANSI_GREEN + ">> I AM the LEADER. Opening socket..." + Colors.ANSI_RESET);
+                                IS_LEADER = true;
+
+                                // Open the socket since I am the leader
+                                clientRequestHandler.openSocket();
+                            }
+                        } else {
+                            System.out.println(Colors.ANSI_CYAN + "> I AM NOT the LEADER. Verifying if I need to " +
+                                    "request STATE from LEADER..." + Colors.ANSI_RESET);
+
+                            // I applied message
+                            if (knownMessagesList.size() > 0){
+                                IS_STATE_POISONED = true;
+                                System.out.println(Colors.ANSI_RED + "> I processed requests as LEADER that I " +
+                                        "SHOULDN'T. MY STATE IS POISONED." + Colors.ANSI_RESET);
+                                // Clear all known messages
+                                knownMessagesList.clear();
+                                NR_KNOWN_MESSAGES = 0;
+                            }
+
+                            // Create a state transfer request operation
+                            Protocol.Operation stateTransferRequestOperation = null;
+
+                            if(IS_STATE_POISONED) {
+                                System.out.println(Colors.ANSI_RED + "> MY STATE IS POISONED. NEED TO REQUEST FOR" +
+                                        " FULL STATE TRANSFER!" + Colors.ANSI_RESET);
+
+                                // Create the state transfer request message
+                                stateTransferRequestOperation = Protocol.Operation.newBuilder()
+                                        .setType(Protocol.OperationType.STATE_TRANSFER_REQUEST)
+                                        .setStateTransferRequest(
+                                                Protocol.StateTransferRequest.newBuilder()
+                                                        .setServerId(serverId)
+                                                        .setType(Protocol.StateTransferRequestType.FULL_STATE)
+                                                        .build()
+                                        )
+                                        .build();
+                            }
+                            else {
+                                MergeProtocolProposal myProposal = mergeProtocol.getProposal(serverId);
+
+                                // Verify if I need to request the state, if my state is not contaminated and
+                                // my proposal is equal to the winner, then no need to request for state
+                                if (myProposal.getNR_MESSAGES_APPLIED() == winner.getNR_MESSAGES_APPLIED() &&
+                                        myProposal.getNR_MESSAGES_KNOWN() == winner.getNR_MESSAGES_KNOWN()){
+                                    System.out.println(Colors.ANSI_BLUE + "> My MERGE PROTOCOL PROPOSAL is EQUAL " +
+                                            " to the WINNER. NO NEED TO REQUEST STATE!" + Colors.ANSI_RESET);
+                                }else {
+                                    // Get my accounts last observed state
+                                    Map<Integer, Integer> myObservedState = bank.getAccountsLastObservedState();
+                                    System.out.println(Colors.ANSI_RED + "> I'm just MISSING SOME STATE. Doing request" +
+                                            " for INCREMENTAL STATE TRANSFER!" + Colors.ANSI_RESET);
+
+                                    // Create the state transfer request message, passing my last observed state
+                                    stateTransferRequestOperation = Protocol.Operation.newBuilder()
+                                            .setType(Protocol.OperationType.STATE_TRANSFER_REQUEST)
+                                            .setStateTransferRequest(
+                                                    Protocol.StateTransferRequest.newBuilder()
+                                                            .setServerId(serverId)
+                                                            .putAllLastObservedStates(myObservedState)
+                                                            .setType(Protocol.StateTransferRequestType.INCREMENTAL_STATE)
+                                                            .build()
+                                            )
+                                            .build();
+                                }
+                            }
+                            try {
+                                if (stateTransferRequestOperation != null){
+                                    // Send the request to be handled by the leader
+                                    networkGroup.sendSafe("server-group", stateTransferRequestOperation);
+                                    System.out.println(Colors.ANSI_GREEN + "> STATE TRANSFER REQUEST sent for LEADER!" + Colors.ANSI_RESET);
+                                }
+                            } catch (SpreadException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    break;
+                case STATE_TRANSFER_REQUEST:
+                    if(IS_LEADER) {
+                        Protocol.StateTransferRequest stateRequest = operation.getStateTransferRequest();
+                        Protocol.Operation stateOperationReply = null;
+
+                        Map<Integer, AccountStatement> bankState = null;
+
+                        //Incremental State Request
+                        if (stateRequest.getType() == Protocol.StateTransferRequestType.INCREMENTAL_STATE) {
+                            System.out.println(Colors.ANSI_BLUE + "> Received a INCREMENTAL STATE TRANSFER REQUEST from "
+                                    + stateRequest.getServerId() + "!" + Colors.ANSI_RESET);
+
+                            bankState = bank.getBankPartialState(
+                                    stateRequest.getLastObservedStatesMap());
+                        } else if(stateRequest.getType() == Protocol.StateTransferRequestType.FULL_STATE) {
+                            System.out.println(Colors.ANSI_BLUE + "> Received a FULL STATE TRANSFER REQUEST from "
+                                    + stateRequest.getServerId() + "!" + Colors.ANSI_RESET);
+
+                            bankState = bank.getBankState();
+                        }
+
+                        assert bankState != null;
+                        stateOperationReply = Protocol.Operation.newBuilder()
+                                .setType(Protocol.OperationType.STATE_TRANSFER_REPLY)
+                                .setStateTransferReply(
+                                        Protocol.StateTransferReply.newBuilder()
+                                                .setServerId(stateRequest.getServerId())
+                                                .putAllAccountsStates(
+                                                        ProtocolUtil.convertBankStateToProtocol(bankState)
+                                                )
+                                                .build())
+                                .build();
+
+                        // Send the reply
+                        try {
+                            networkGroup.sendSafe("server-group", stateOperationReply);
+                            System.out.println(Colors.ANSI_GREEN + "> Sent STATE TRANSFER REPLY to " + stateRequest.getServerId() + Colors.ANSI_RESET);
+                        } catch (SpreadException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
+                case STATE_TRANSFER_REPLY:
+                    Protocol.StateTransferReply stateReply = operation.getStateTransferReply();
+
+                    if(stateReply.getServerId().equals(serverId)){
+                        System.out.println(Colors.ANSI_BLUE + "> Received the STATE TRANSFER REPLY from the LEADER!" + Colors.ANSI_RESET);
+
+                        Map<Integer, Protocol.AccountStatement> mapAccountStatement = stateReply.getAccountsStatesMap();
+
+                        for(Map.Entry<Integer, Protocol.AccountStatement> e : mapAccountStatement.entrySet()) {
+                            for (Protocol.MovementInfo movement : e.getValue().getMovementsList()) {
+                                bank.updateAccountState(e.getKey(), ProtocolUtil.convertProtocolMovementInfoToMovementInfo(movement));
+                                NR_APPLIED_MESSAGES++;
+                            }
+                        }
+                        System.out.println(Colors.ANSI_GREEN + "> APPLIED with SUCCESS the received STATE!" + Colors.ANSI_RESET);
+                    }
+                    break;
+                default:
+                    System.err.println("> Unknown operation!");
+                    break;
+            }
+        }catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Replay all known messages
+    private void replay(){
+        for (Protocol.Operation operation : knownMessagesList){
+            processOperation(operation);
+            knownMessagesList.remove(operation);
+        }
     }
 
     public void updateReplicasState(String requestUUID, Protocol.StateUpdate stateUpdateMessage, CompletableFuture<Void> clientRequest){

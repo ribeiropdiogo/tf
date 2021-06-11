@@ -42,6 +42,15 @@ public class MergeProtocol {
         }
     }
 
+    public MergeProtocolProposal getProposal(String serverId){
+        for (MergeProtocolProposal proposal : proposals){
+            if (proposal.getPROCESS_ID().equals(serverId)){
+                return proposal;
+            }
+        }
+        return null;
+    }
+
     /**
      * Comparator to compare which of two proposal's has the higher chance of winning
      * the merge.
