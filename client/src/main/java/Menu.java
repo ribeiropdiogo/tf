@@ -9,7 +9,7 @@ public class Menu {
     private final Stub stub;
 
     public Menu(int clientPort) throws ExecutionException, InterruptedException {
-        this.stub = new Stub(clientPort, 5, false);
+        this.stub = new Stub(clientPort, 10, false);
     }
 
     public void menu() {

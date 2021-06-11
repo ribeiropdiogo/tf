@@ -37,12 +37,9 @@ public class ProtocolUtil {
         );
     }
 
-    public static Protocol.StateUpdate createStateUpdateFromMovementOperation(
-            String stateTransferId, int accountId, MovementInfo movementInfo
-    ){
+    public static Protocol.StateUpdate createStateUpdateFromMovementOperation(int accountId, MovementInfo movementInfo){
 
         return Protocol.StateUpdate.newBuilder()
-                .setStateTransferId(stateTransferId)
                 .setType(Protocol.StateUpdateType.MOVEMENT_OPERATION)
                 .setAccountId(accountId)
                 .addStateInfo(convertMovementInfoToProtocol(movementInfo))
@@ -50,12 +47,11 @@ public class ProtocolUtil {
     }
 
     public static Protocol.StateUpdate createStateUpdateFromTransferOperation(
-            String stateTransferId, int withdrawAccId, MovementInfo withdrawAccountMovInfo,
+            int withdrawAccId, MovementInfo withdrawAccountMovInfo,
             int depositAccId, MovementInfo depositAccountMovInfo
     ){
 
         return Protocol.StateUpdate.newBuilder()
-                .setStateTransferId(stateTransferId)
                 .setType(Protocol.StateUpdateType.TRANSFER_OPERATION)
                 .setTransfer(Protocol.MoneyTransfer.newBuilder()
                         .setAccountWithdraw(withdrawAccId)
@@ -67,8 +63,7 @@ public class ProtocolUtil {
                 .build();
     }
 
-    public static Protocol.StateUpdate createStateUpdateFromInterestCreditOperation(
-            String stateTransferId, Map<Integer, MovementInfo> appliedCreditAccounts){
+    public static Protocol.StateUpdate createStateUpdateFromInterestCreditOperation(Map<Integer, MovementInfo> appliedCreditAccounts){
 
         Map<Integer, Protocol.MovementInfo> appliedCreditAccountsProtocol = new HashMap<>();
 
@@ -76,7 +71,6 @@ public class ProtocolUtil {
         appliedCreditAccounts.forEach((k, v) -> appliedCreditAccountsProtocol.put(k, convertMovementInfoToProtocol(v)));
 
         return Protocol.StateUpdate.newBuilder()
-                .setStateTransferId(stateTransferId)
                 .setType(Protocol.StateUpdateType.INTEREST_CREDIT_OPERATION)
                 .putAllAppliedCreditAccounts(appliedCreditAccountsProtocol)
                 .build();

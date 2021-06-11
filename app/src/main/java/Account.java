@@ -93,9 +93,12 @@ public class Account {
      */
     public AccountStatement getPartialAccountStatement(int movementId){
         List<MovementInfo> movementInfoList = this.statement.getMovements();
+
         AccountStatement newAccountStatement = new AccountStatement();
 
-        int startIndex = Math.max(this.lastMovementId - movementId - 1, 0);
+        int startIndex;
+        if(movementId >= 10) startIndex = 10 - (this.lastMovementId - movementId);
+        else startIndex = movementId;
 
         for (;startIndex<movementInfoList.size();startIndex++){
             MovementInfo movementInfo = movementInfoList.get(startIndex);

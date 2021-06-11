@@ -124,13 +124,10 @@ public class ClientRequestHandler {
             CompletableFuture<Void> clientResponse = new CompletableFuture<>();
 
             // Start the replication to other replicas
-            String stateTransferId = UUID.randomUUID().toString();
             MovementInfo movementInfo = opResult.getRight();
-            replicationHandler.updateReplicasState(
-                    stateTransferId,
-                    ProtocolUtil.createStateUpdateFromMovementOperation(stateTransferId, accountId, movementInfo),
-                    clientResponse
-            );
+            replicationHandler.addCompletedRequest(
+                    ProtocolUtil.createStateUpdateFromMovementOperation(accountId, movementInfo), clientResponse);
+            replicationHandler.updateReplicasState();
 
             clientResponse.thenAccept(v -> {
                 System.out.println(Colors.ANSI_BLUE + "> The client request is complete and the state is" +
@@ -203,16 +200,17 @@ public class ClientRequestHandler {
             CompletableFuture<Void> clientResponse = new CompletableFuture<>();
 
             // Start the replication to other replicas
-            String stateTransferId = UUID.randomUUID().toString();
             MovementInfo withdrawMovementInfo = opResult.getMiddle();
             MovementInfo depositMovementInfo = opResult.getRight();
-            replicationHandler.updateReplicasState(
-                    stateTransferId,
+
+            // Add the request as completed
+            replicationHandler.addCompletedRequest(
                     ProtocolUtil.createStateUpdateFromTransferOperation(
-                            stateTransferId, withdrawAccountId, withdrawMovementInfo, depositAccountId, depositMovementInfo
-                    ),
-                    clientResponse
+                            withdrawAccountId, withdrawMovementInfo, depositAccountId, depositMovementInfo
+                    ), clientResponse
             );
+
+            replicationHandler.updateReplicasState();
 
             clientResponse.thenAccept(v -> {
                 System.out.println(Colors.ANSI_BLUE + "> The client request is complete and the state is" +
@@ -338,14 +336,13 @@ public class ClientRequestHandler {
             CompletableFuture<Void> clientResponse = new CompletableFuture<>();
 
             // Start the replication to other replicas
-            String stateTransferId = UUID.randomUUID().toString();
-            replicationHandler.updateReplicasState(
-                    stateTransferId,
+            replicationHandler.addCompletedRequest(
                     ProtocolUtil.createStateUpdateFromInterestCreditOperation(
-                            stateTransferId, appliedCreditAccounts
+                            appliedCreditAccounts
                     ),
                     clientResponse
             );
+            replicationHandler.updateReplicasState();
 
             clientResponse.thenAccept(v -> {
                 System.out.println(Colors.ANSI_BLUE + "> The client request is complete and the state is" +

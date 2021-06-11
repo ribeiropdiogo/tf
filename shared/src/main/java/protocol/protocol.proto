@@ -56,18 +56,17 @@ enum StateUpdateType {
 
 // Message that represents a state transfer
 message StateUpdate {
-  string stateTransferId = 1;
-  StateUpdateType type = 2;
-  repeated MovementInfo stateInfo = 3;
+  StateUpdateType type = 1;
+  repeated MovementInfo stateInfo = 2;
 
   // Represents a single account id, useful for movement operation
-  optional int32 account_id = 4;
+  optional int32 account_id = 3;
 
   // Represents the account id's of the transfer between two accounts
-  optional MoneyTransfer transfer = 5;
+  optional MoneyTransfer transfer = 4;
 
   // Map that contains all accounts which the balance changed after interest credit
-  map<int32, MovementInfo> appliedCreditAccounts = 6;
+  map<int32, MovementInfo> appliedCreditAccounts = 5;
 }
 
 // Represents the type of the state transfer request, or full state in case of poisoned state
@@ -109,16 +108,17 @@ message Operation {
   optional MoneyTransfer moneyTransfer = 5; // Money transfer operation
 
   // Update State
-  optional StateUpdate stateUpdate = 6;
+  string state_transfer_id = 6;
+  repeated StateUpdate stateUpdate = 7;
 
   // Request for state
-  optional StateTransferRequest stateTransferRequest = 7;
+  optional StateTransferRequest stateTransferRequest = 8;
 
   // Reply from the leader with the requested state
-  optional StateTransferReply  state_transfer_reply = 8;
+  optional StateTransferReply  state_transfer_reply = 9;
 
   // Merge protocol proposal
-  optional  MergeProtocolProposal mergeProtocolProposal = 9;
+  optional  MergeProtocolProposal mergeProtocolProposal = 10;
 }
 
 // ------- REPLIES ------- //

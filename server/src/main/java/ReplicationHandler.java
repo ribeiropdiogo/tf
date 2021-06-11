@@ -1,4 +1,5 @@
 import com.google.protobuf.InvalidProtocolBufferException;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import protocol.Protocol;
 import spread.*;
 
@@ -6,6 +7,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ReplicationHandler {
 
@@ -35,9 +37,14 @@ public class ReplicationHandler {
 
     private final List<Protocol.Operation> knownMessagesList;
 
-    // Map that contains the state update request id as key and value the client request,
-    // when I (leader) receive the safe message back can complete the client request and remove it
-    private final Map<String, CompletableFuture<Void>> clientsRequests;
+    // Map that contains the state update request id as key and value one or more client requests,
+    // when I (leader) receive the safe message back can complete the client requests and remove it
+    private final Map<String, List<CompletableFuture<Void>>> clientsRequests;
+
+    // Queue that contains all completed requests, when a operation completes is added to this queue, then it's verified
+    // if this queue has more than one completed requests in the moment to send the state update to the replicas if it has then
+    // the completed requests are grouped in only one request to the replicas, if not then only one message is sent
+    private final Queue<ImmutablePair<Protocol.StateUpdate, CompletableFuture<Void>>> completedRequests;
 
     // Handler for client's request via tcp socket
     private final ClientRequestHandler clientRequestHandler;
@@ -51,6 +58,8 @@ public class ReplicationHandler {
         this.knownMessagesList = new ArrayList<>();
 
         this.clientsRequests = new ConcurrentHashMap<>();
+
+        this.completedRequests = new LinkedBlockingQueue<>();
 
         this.clientRequestHandler = new ClientRequestHandler(this.bank, this);
     }
@@ -213,55 +222,59 @@ public class ReplicationHandler {
                                 NR_APPLIED_MESSAGES++;
 
                                 // Complete the client request
-                                clientsRequests.get(operation.getStateUpdate().getStateTransferId()).complete(null);
-                                clientsRequests.remove(operation.getStateUpdate().getStateTransferId());
+                                String stateTransferRequestId = operation.getStateTransferId();
+                                List<CompletableFuture<Void>> clientRequests = clientsRequests.get(stateTransferRequestId);
+                                clientRequests.forEach(request -> request.complete(null));
+                                clientsRequests.remove(stateTransferRequestId);
                             }
                         }
                     }else {
-                        switch (operation.getStateUpdate().getType()){
-                            case MOVEMENT_OPERATION:
-                                System.out.println("> Received a STATE UPDATE about a MOVEMENT Operation on the " +
-                                        "account " + operation.getStateUpdate().getAccountId() + ".");
-                                MovementInfo movementInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
-                                        operation.getStateUpdate().getStateInfo(0)
-                                );
-                                // Update the state of the account
-                                bank.updateAccountState(operation.getStateUpdate().getAccountId(), movementInfo);
-                                break;
-                            case TRANSFER_OPERATION:
-                                int withdrawAccId = operation.getStateUpdate().getTransfer().getAccountWithdraw();
-                                int depositAccId = operation.getStateUpdate().getTransfer().getAccountDeposit();
-                                System.out.println("> Received a STATE UPDATE about a TRANSFER Operation between " +
-                                        "withdraw account " + withdrawAccId  + " and deposit account " +  depositAccId + ".");
-                                MovementInfo withdrawAccInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
-                                        operation.getStateUpdate().getStateInfo(0)
-                                );
-                                MovementInfo depositAccInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
-                                        operation.getStateUpdate().getStateInfo(1)
-                                );
-                                // Update the state of the accounts
-                                bank.updateAccountState(withdrawAccId, withdrawAccInfo);
-                                bank.updateAccountState(depositAccId, depositAccInfo);
-                                break;
-                            case INTEREST_CREDIT_OPERATION:
-                                Map<Integer, Protocol.MovementInfo> appliedCreditAccounts = operation.getStateUpdate().getAppliedCreditAccountsMap();
-                                Set<Integer> accountIds = appliedCreditAccounts.keySet();
-                                System.out.println("> Received a STATE UPDATE about a INTEREST CREDIT Operation on" +
-                                        " a number of " + accountIds.size() + " accounts.");
-
-                                // Update the state of all the accounts that were modified
-                                for(Integer accountId : accountIds){
-                                    MovementInfo movementInfoAcc = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
-                                            appliedCreditAccounts.get(accountId)
+                        List<Protocol.StateUpdate> stateUpdates = operation.getStateUpdateList();
+                        for (Protocol.StateUpdate stateUpdate : stateUpdates){
+                            switch (stateUpdate.getType()){
+                                case MOVEMENT_OPERATION:
+                                    System.out.println("> Received a STATE UPDATE about a MOVEMENT Operation on the " +
+                                            "account " + stateUpdate.getAccountId() + ".");
+                                    MovementInfo movementInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
+                                            stateUpdate.getStateInfo(0)
                                     );
-                                    // Update this account state
-                                    bank.updateAccountState(accountId, movementInfoAcc);
-                                }
-                                break;
-                        }
+                                    // Update the state of the account
+                                    bank.updateAccountState(stateUpdate.getAccountId(), movementInfo);
+                                    break;
+                                case TRANSFER_OPERATION:
+                                    int withdrawAccId = stateUpdate.getTransfer().getAccountWithdraw();
+                                    int depositAccId = stateUpdate.getTransfer().getAccountDeposit();
+                                    System.out.println("> Received a STATE UPDATE about a TRANSFER Operation between " +
+                                            "withdraw account " + withdrawAccId  + " and deposit account " +  depositAccId + ".");
+                                    MovementInfo withdrawAccInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
+                                            stateUpdate.getStateInfo(0)
+                                    );
+                                    MovementInfo depositAccInfo = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
+                                            stateUpdate.getStateInfo(1)
+                                    );
+                                    // Update the state of the accounts
+                                    bank.updateAccountState(withdrawAccId, withdrawAccInfo);
+                                    bank.updateAccountState(depositAccId, depositAccInfo);
+                                    break;
+                                case INTEREST_CREDIT_OPERATION:
+                                    Map<Integer, Protocol.MovementInfo> appliedCreditAccounts = stateUpdate.getAppliedCreditAccountsMap();
+                                    Set<Integer> accountIds = appliedCreditAccounts.keySet();
+                                    System.out.println("> Received a STATE UPDATE about a INTEREST CREDIT Operation on" +
+                                            " a number of " + accountIds.size() + " accounts.");
 
-                        // Increment the number of applied messages
-                        NR_APPLIED_MESSAGES++;
+                                    // Update the state of all the accounts that were modified
+                                    for(Integer accountId : accountIds){
+                                        MovementInfo movementInfoAcc = ProtocolUtil.convertProtocolMovementInfoToMovementInfo(
+                                                appliedCreditAccounts.get(accountId)
+                                        );
+                                        // Update this account state
+                                        bank.updateAccountState(accountId, movementInfoAcc);
+                                    }
+                                    break;
+                            }
+                            // Increment the number of applied messages
+                            NR_APPLIED_MESSAGES++;
+                        }
                     }
                     break;
                 case MERGE_PROTOCOL_PROPOSAL:
@@ -452,15 +465,39 @@ public class ReplicationHandler {
         }
     }
 
-    public void updateReplicasState(String requestUUID, Protocol.StateUpdate stateUpdateMessage, CompletableFuture<Void> clientRequest){
+    /**
+     * Function to add a completed request by the client request handler to the queue of completed requests
+     * @param stateUpdateMessage The state update message
+     * @param clientRequest The completable future for the client request
+     */
+    public void addCompletedRequest(Protocol.StateUpdate stateUpdateMessage, CompletableFuture<Void> clientRequest){
+        this.completedRequests.add(new ImmutablePair<>(stateUpdateMessage, clientRequest));
 
-        // Add the client request to the clients requests maps
-        this.clientsRequests.put(requestUUID, clientRequest);
+    }
+
+    public void updateReplicasState(){
+
+        // Generate a request UUID
+        String stateTransferId = UUID.randomUUID().toString();
+
+        // Add this state update request to the clients requests maps
+        this.clientsRequests.put(stateTransferId, new ArrayList<>());
+
+        // Create a List of Update State messages
+        List<Protocol.StateUpdate> stateUpdates = new ArrayList<>();
+
+        // If the queue has more than one completed requests create a request BATCH
+        while (!completedRequests.isEmpty()){
+            ImmutablePair<Protocol.StateUpdate, CompletableFuture<Void>> request = completedRequests.remove();
+            stateUpdates.add(request.getLeft());
+            this.clientsRequests.get(stateTransferId).add(request.getRight());
+        }
 
         // Create the state update operation
         Protocol.Operation stateUpdateOperation = Protocol.Operation.newBuilder()
                 .setType(Protocol.OperationType.STATE_UPDATE)
-                .setStateUpdate(stateUpdateMessage)
+                .setStateTransferId(stateTransferId)
+                .addAllStateUpdate(stateUpdates)
                 .build();
 
         try {
@@ -468,7 +505,11 @@ public class ReplicationHandler {
             // or receive a view update before my message come back
             networkGroup.sendSafe("server-group", stateUpdateOperation);
 
-            System.out.println(Colors.ANSI_GREEN + "> STATE UPDATE Operation message sent to all backup servers." + Colors.ANSI_RESET);
+            if (stateUpdates.size() > 1){
+                System.out.println(Colors.ANSI_GREEN + "> STATE UPDATE OPERATION BATCH message sent to all backup servers." + Colors.ANSI_RESET);
+            } else {
+                System.out.println(Colors.ANSI_GREEN + "> STATE UPDATE Operation message sent to all backup servers." + Colors.ANSI_RESET);
+            }
 
         } catch (SpreadException e) {
             e.printStackTrace();
