@@ -389,8 +389,7 @@ public class ReplicationHandler {
                             System.out.println(Colors.ANSI_BLUE + "> Received a INCREMENTAL STATE TRANSFER REQUEST from "
                                     + stateRequest.getServerId() + "!" + Colors.ANSI_RESET);
 
-                            bankState = bank.getBankPartialState(
-                                    stateRequest.getLastObservedStatesMap());
+                            bankState = bank.getBankPartialState(stateRequest.getLastObservedStatesMap());
                         } else if(stateRequest.getType() == Protocol.StateTransferRequestType.FULL_STATE) {
                             System.out.println(Colors.ANSI_BLUE + "> Received a FULL STATE TRANSFER REQUEST from "
                                     + stateRequest.getServerId() + "!" + Colors.ANSI_RESET);
